@@ -18,7 +18,7 @@ Mobile app that collects the songs friends share in chat apps (WhatsApp first) i
 ## Key decisions
 
 - Plain-folder monorepo, no monorepo tool (ADR-0001).
-- WhatsApp via whatsmeow, in a thin Go bridge on the server; no on-device capture (ADR-0002).
+- WhatsApp via whatsmeow in a thin Go bridge on the server; it POSTs every message to Rust by webhook and stores no Quincy data (ADR-0002).
 - Rust server holds all logic; Go only for the bridge (ADR-0003).
 - No streaming write APIs for the prototype: songs open in the user's app via links (ADR-0004).
 - Cross-service song matching is our own code: ISRC first, then cleaned metadata + duration (ADR-0005).

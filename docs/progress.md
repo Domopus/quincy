@@ -8,17 +8,20 @@ Re-framing the project after a 6-month break. No new code yet. Decisions so far 
 
 ## Next step
 
-Build an adapted **grilling** skill (based on mattpocock/skills `grilling` + `domain-modeling`), then grill the open questions below one at a time, writing each answer into the docs as it lands.
+Grill the open questions below with `/grilling` (global skill, built 2026-10-18), writing each answer into the docs as it lands.
 
 ## Open questions (for grilling)
 
-- **Repo layout** inside the monorepo (folder names, where `proto/`/shared schemas live).
-- **Bridge ↔ server contract**: how the Go bridge hands links to the Rust server (HTTP, gRPC, queue).
+- **Repo layout** inside the monorepo (folder names, where generated clients live).
 - **User identity**: the old spec used Spotify login as identity; no streaming OAuth now. What replaces it?
 - **WhatsApp pairing UX**: phone number → 8-char code in the app; confirm flow and re-pair handling.
 - **DB details** (model agreed in ADR-0006): final table names; how two items get merged when a match reveals they're the same.
 - **Streaming services to support**: research Tidal / Apple Music / YouTube Music official playlist-write APIs.
 - **Design**: create `DESIGN.md` when the UI work starts.
+
+## Assumed (review with the user)
+
+- Bridge retries a failed webhook with backoff for a few minutes, in memory only, then drops the message — never writes message text to disk.
 
 ## Planned backend conventions (apply when the Rust server is scaffolded, then move to `backend/CLAUDE.md`)
 
