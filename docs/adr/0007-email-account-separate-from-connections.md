@@ -11,7 +11,7 @@ The old spec used Spotify login as identity. ADR-0004 removed streaming logins, 
 - A User signs up with **email + password**, verified by a 6-digit code sent by email and typed in the app. That is the Account. A code works whichever device the mail is read on, with no App Links setup.
 - Chat sources are **Chat connections** attached to the Account. Each one is a live session (WhatsApp pairing first).
 - Streaming is only a **Preferred service**: a choice of where songs open. No streaming login (ADR-0004); song lookups use app-level access.
-- Onboarding after verification: username, then Chat connections, then Preferred service. The order may be revised.
+- Onboarding after verification: Preferred service, then Chat connections (revised 2026-10-25: the one-tap step goes before the pairing step, where people drop off). Username dropped from the prototype on 2026-10-25; see product.md "Later".
 
 ## Rejected
 
