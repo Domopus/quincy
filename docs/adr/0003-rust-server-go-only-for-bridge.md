@@ -8,7 +8,7 @@ whatsmeow forces Go into the stack. Matching, storage and the app API could live
 
 ## Decision
 
-All domain logic (matching, database, app API) is in the Rust server. The Go bridge stays thin: session handling, URL filtering, forwarding.
+All domain logic (matching, database, app API) is in the Rust server. The Go bridge stays thin: session handling and forwarding. URL filtering is in Rust (ADR-0002, amended 2026-10-18).
 
 ## Rejected
 

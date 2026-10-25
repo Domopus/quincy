@@ -29,7 +29,7 @@ Out of the prototype: "Add all to queue" and writing to a playlist — no legiti
 
 ## Principles
 
-- **Privacy:** only music links (and the message written with them) are kept; everything else is dropped immediately.
+- **Privacy:** only music links (and the message written with them) are kept; everything else is dropped as soon as the server has read it. A message waiting for delivery is never stored in readable form.
 - **Easy setup:** connecting WhatsApp is a one-time, ~30-second step; the User never re-pairs.
 - **Extensible:** each chat source and streaming service is an isolated module.
 

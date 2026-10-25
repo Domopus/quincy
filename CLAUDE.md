@@ -25,6 +25,7 @@ Mobile app that collects the songs friends share in chat apps (WhatsApp first) i
 - Catalogue: one row per (item, service); translation confidence = the weaker of the two rows (ADR-0006).
 - Identity is an email Account; chat sources are Chat connections attached to it; streaming is only a Preferred service, no login (ADR-0007).
 - Spotify data never goes to another service; Spotify-link details come from the WhatsApp link preview (ADR-0008).
+- Every chat source is a thin bridge sharing one webhook format (with `source`) and one command set (ADR-0009).
 - Deferred on purpose for the prototype: authorization, token encryption, Tauri-specific features. Not bugs.
 
 ## State of the code
