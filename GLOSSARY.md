@@ -3,6 +3,9 @@
 Domain terms only — no implementation details.
 
 - **User** — a person using Quincy.
+- **Account** — a User's sign-in identity: email + password, verified by email. Holds a username.
+- **Chat connection** — a chat source linked to an Account through a live session (WhatsApp pairing first; Messenger, Instagram later). Shares arrive through it.
+- **Preferred service** — the streaming service where a User's songs open. A choice, not a login. Never call it a "connection".
 - **Contact** — a person in a chat app who sends links to a User. Not necessarily a User.
 - **Share** — one event: a Contact sent a music link to a User in a conversation. Holds the original link and an optional message the Contact wrote with it.
 - **Feed** — the User's list of Shares, filterable by Listened / Not listened.

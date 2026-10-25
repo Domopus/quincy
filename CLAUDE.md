@@ -23,6 +23,7 @@ Mobile app that collects the songs friends share in chat apps (WhatsApp first) i
 - No streaming write APIs for the prototype: songs open in the user's app via links (ADR-0004).
 - Cross-service song matching is our own code: ISRC first, then cleaned metadata + duration (ADR-0005).
 - Catalogue: one row per (item, service); translation confidence = the weaker of the two rows (ADR-0006).
+- Identity is an email Account; chat sources are Chat connections attached to it; streaming is only a Preferred service, no login (ADR-0007).
 - Deferred on purpose for the prototype: authorization, token encryption, Tauri-specific features. Not bugs.
 
 ## State of the code

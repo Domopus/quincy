@@ -4,6 +4,12 @@
 
 Friends share songs in chat apps. They get buried in conversations and never listened to.
 
+## Onboarding (prototype)
+
+1. Sign up with email + password.
+2. A screen says a 6-digit code was emailed; the User types it in. The screen also offers **Resend email** and **Change email**, so it never dead-ends.
+3. Pick a username, add a Chat connection (WhatsApp), choose a Preferred service (Deezer first).
+
 ## Core loop (prototype)
 
 1. A Contact sends a music link (Spotify or Deezer) in a WhatsApp conversation.
@@ -28,6 +34,9 @@ Out of the prototype: "Add all to queue" and writing to a playlist — no legiti
 - **Extensible:** each chat source and streaming service is an isolated module.
 
 ## Later (nice to have, not in the prototype)
+
+- Sign in with Google / Facebook (SSO).
+- A tap-to-open link in the verification email, alongside the code.
 
 - Show every Contact who shared the same Song ("Alice and Bob shared this").
 - Profile page: the songs the User has shared.
