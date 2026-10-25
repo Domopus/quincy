@@ -23,4 +23,4 @@ Odesli/song.link may be used as a second opinion when available.
 
 ## Consequences
 
-Spotify links have no ISRC since Feb 2026, so they always go through metadata matching.
+The Spotify API still returns ISRCs: Spotify removed `external_ids` in Feb 2026 and restored it in March 2026 (corrected 2026-10-25). We may not use Spotify data to match on another service (ADR-0008).

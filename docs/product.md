@@ -24,7 +24,7 @@ Out of the prototype: "Add all to queue" and writing to a playlist — no legiti
 
 - **Platforms:** Android (GrapheneOS first), then iOS. Built with Tauri.
 - **Chat sources:** WhatsApp → Messenger, others later.
-- **Streaming services:** Deezer and Spotify links in → user's preferred service out. More services later.
+- **Streaming services:** Deezer and Spotify, both as shared links and as Preferred service. Apple Music, Tidal, YouTube Music later (limits in `docs/progress.md`).
 - **Share types:** songs first; albums, playlists, artists later.
 
 ## Principles
