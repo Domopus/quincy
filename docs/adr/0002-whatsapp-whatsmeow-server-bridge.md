@@ -20,7 +20,7 @@ A thin Go bridge on the server runs one whatsmeow linked-device session per User
 - **Android notification listener (on device)** — private and no ban risk, but misses muted chats and doesn't exist on iOS.
 - **whatsapp-rust** — very active but pre-1.0 (v0.7, Aug 2026). Revisit if it matures; it would remove Go.
 - **Baileys (Node)** — independent reimplementation, more breakage reports, heavier per connection.
-- **mautrix-whatsapp** — needs a Matrix homeserver.
+- **mautrix-whatsapp** — needs a Matrix homeserver, which stores every bridged message as room events: breaks the privacy promise (only music links are kept), and adds a server plus a Matrix account per User. Its network connector without the homeserver is a separate option, open in `docs/progress.md` (added 2026-11-01).
 - **Filtering in the bridge** — would put logic in Go; Rust holds all logic (ADR-0003), and the Go part stays easy to replace.
 - **Rust polling a GET** — the bridge would have to keep private messages waiting until fetched.
 - **SSE stream from the bridge** — works (Go `huma` documents it), but SSE is idiomatic for server → browser, not service → service; Rust's `progenitor` has no SSE client, so the reader would be hand-written. Webhooks are the conventional pattern (also used by whatsmeow REST wrappers like wuzapi) and fully generated.

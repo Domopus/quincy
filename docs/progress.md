@@ -18,6 +18,7 @@ First task when the matcher is built (decided 2026-10-25): live-test that a new 
 
 - **Repo layout** inside the monorepo (folder names, where generated clients live).
 - **Item merging** (ADR-0006): when a match finds that two Items are the same. Proposal awaiting the user's answer: always merge into the older Item; the absorbed Item's rows lose `source` and take the match's `method`/`confidence`, so translation confidence stays honest; Shares and Listened move over (earliest Listened time kept); log each merge in `item_merges` for manual undo.
+- **Messenger bridge: mautrix bridgev2 connector route** (raised 2026-11-01, decide when Messenger starts). mautrix-go's bridgev2 splits network connectors (WhatsApp, Messenger via `mautrix-meta`, Signal, Telegram…) from the Matrix connector; Beeper already runs a Matrix connector with no homeserver for its local bridges. A Quincy connector could run mautrix's maintained network connectors and emit the ADR-0009 webhook, giving new sources almost for free. Check first: size of the Matrix-side interface; whether bridgev2's database stores message text (privacy promise); licence (bridge repos believed AGPL-3.0, mautrix-go and whatsmeow MPL-2.0, unverified). Keep plain whatsmeow for the WhatsApp prototype.
 - **Unverified, check when the bridge exists:** how often WhatsApp previews are missing for Spotify links, and whether `musicMetadata` is filled for them.
 
 ## Streaming API facts (researched 2026-10-18)
