@@ -4,7 +4,7 @@ Status: Accepted (2026-10-25)
 
 ## Context
 
-To open a shared Spotify link on Deezer, the matcher (ADR-0005) needs the song's title, artist and ideally ISRC or duration. Spotify's Developer Policy (effective 2025-05-15) forbids an app "that enables the transfer of data to another service", except a user's own personal or playlist data. In 2020 Spotify made SongShift remove exactly this flow. oEmbed falls under the same terms, and reading the track page is scraping, banned by Spotify's User Guidelines. Facts and sources: `docs/progress.md`.
+To open a shared Spotify link on Deezer, the matcher (ADR-0005) needs the song's title, artist and ideally ISRC or duration. Spotify's Developer Policy (effective 2025-05-15) forbids an app "that enables the transfer of data to another service", except a user's own personal or playlist data. That exception is why playlist migration tools (TuneMyMusic, used by Deezer and by Spotify itself) are allowed: a User moves their own playlists with their own Spotify login. A Contact's shared song, translated with Quincy's app token for another User, is neither (checked 2026-11-03). oEmbed falls under the same terms, and reading the track page is scraping, banned by Spotify's User Guidelines. Facts and sources: `docs/progress.md`.
 
 ## Decision
 

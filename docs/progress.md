@@ -34,7 +34,8 @@ Lookup (ISRC or search) and deep links need no user auth on any service. The bin
 Spotify terms (checked 2026-10-25, Developer Policy and Terms effective 2025-05-15):
 
 - Policy §III: "Do not build an SDA that enables the transfer of data to another service", except a user's personal data or playlist metadata. Sending a Spotify track's title/artist to Deezer search is such a transfer.
-- Precedent: in 2020 Spotify made SongShift remove Spotify → rival-service transfers or lose API access.
+- Precedent: on 2020-10-12 Spotify made SongShift remove Spotify → rival-service transfers; about ten days later it added the "user's personal data / playlist metadata" exception, so playlist moves are allowed again (Spotify-created playlists reportedly excluded, unverified). A reversed precedent, not a standing ban.
+- Migration tools (checked 2026-11-03): Deezer's "Import my music" sends Users to TuneMyMusic, which uses the Spotify Web API with the User's own login (OAuth). Since Nov 2025 Spotify's own import also runs on TuneMyMusic. This fits the exception; Quincy's core flow (a Contact's song, Quincy's app token, another User) does not. Spotify is not an EU DMA gatekeeper. Sources: support.deezer.com article 360020762638, tunemymusic.com terms, techcrunch.com 2025-11-20, appleinsider.com 2020-10-12.
 - oEmbed falls under the Developer Terms, the Widget Terms bar transfer "to another music service that competes with Spotify", and it returns only the title (no artist, no duration).
 - The public track page's meta tags hold title, artist and duration, but automated reading is scraping, banned by Spotify's User Guidelines.
 - ISRC: removed from dev-mode track objects in Feb 2026, restored in March 2026 (`external_ids` "[REVERTED]").
