@@ -1,6 +1,6 @@
 # 0006 — Catalogue data model: one row per (item, service)
 
-Status: Accepted (2026-10-18). Names settled 2026-10-25: Item, `items`, `item_links`.
+Status: Accepted (2026-10-18). Names settled 2026-10-25: Item, `items`, `item_links`. `conversations` added 2026-11-03.
 
 ## Context
 
@@ -10,7 +10,8 @@ A link shared from any service must open on the User's service, every match shou
 
 - **`items`** — one row per piece of music, with a `kind` enum (`song`, `album`, `playlist`, `artist`; only `song` in the prototype). Holds display metadata (title, artist, cover, duration) and the cross-service code when known: ISRC for tracks, UPC for albums.
 - **`item_links`** — `(item_id, kind, service, external_id, confidence, method, attempted_at)`. One row per service; unique on `(service, kind, external_id)`, because a service's IDs are only unique per kind (a Deezer track and a Deezer album can share a number). `kind` repeats the item's, kept consistent by a composite foreign key `(item_id, kind)` (corrected 2026-10-25). Rows for the same item share `item_id`.
-- **`shares`** — `(user, contact, item_id, original_url, conversation, message, received_at)`, plus `(source, message_id)` from the bridge, unique per conversation so resent messages are dropped (ADR-0009).
+- **`conversations`** — `(id, chat_connection, external_id, kind, name)`, `kind` = `direct` | `group`; unique on `(chat_connection, external_id)`. The name is refreshed from each webhook (added 2026-11-03: group chats are where many songs are shared, and the Feed shows the name).
+- **`shares`** — `(user, contact, item_id, original_url, conversation_id, message, received_at)`, plus `(source, message_id)` from the bridge, unique per conversation so resent messages are dropped (ADR-0009).
 - **`listened`** — `(user, item_id, listened_at)`: per User + item, not per Share.
 
 ### Lookup
