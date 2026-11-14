@@ -2,28 +2,27 @@
 
 _Rewrite this file; don't append. Git keeps the history._
 
-## Where we are (2026-11-03)
+## Where we are (2026-11-14)
 
-Re-framing the project after a 6-month break; grilling the open questions. No new code yet. Decisions so far are in `docs/adr/` and `GLOSSARY.md`. Grilling session of 2026-10-25 settled: no username in the prototype, onboarding order, Spotify data rules (ADR-0008), Deezer + Spotify as Preferred services, chat bridge contract and delivery rules (ADR-0009), webhook failures (ADR-0002), Item naming (ADR-0006). Session of 2026-11-03: Conversation is an entity with a kind and a name (glossary, ADR-0006, ADR-0009).
+Re-framing the project after a 6-month break. No new code yet. Decisions are in `docs/adr/`, `GLOSSARY.md` and `product.md`. Sessions of 2026-10-25 and 2026-11-03 grilled the bridge contract, Spotify data rules and Item identity. On 2026-11-14 an external review by Claude Fable 5.2 (`docs/reviews/2026-11-10-fable-review.md`, opinion, not decisions) was checked and its doc inconsistencies fixed. Then the prototype was defined (`product.md` "Audience" and "Prototype success"): Quincy is a personal tool; the prototype's only User is the developer, whose Account is created in the database (ADR-0007); friends follow if it succeeds. A reply assistant is a project goal (`product.md` "Later"). The review's spikes-first order was adopted: measure real messages before designing further.
+
+Review points still worth keeping in mind: the whatsmeow session store is the asset to protect; WhatsApp-side ban risk deserves a plain warning at pairing; ADR-0003's rejection reason is stale. Corrections to the review: a search-link-only Spotify output shrinks the expiry section but doesn't remove it (Spotify `source` rows remain); "derived identity" also needs Listened and Shares rekeyed, since both use `item_id`.
 
 ## Next step
 
-**First: discuss the external review's order of work.** The review by Claude Fable 5.2 is in `docs/reviews/2026-11-10-fable-review.md` (opinion, not decisions). Checked against the docs on 2026-11-14: its facts hold; its section 6 inconsistencies are fixed. Settled since: Quincy is a personal tool, not a market product, and a reply assistant is a project goal (`product.md` "Audience" and "Later"). This weakens the review's launch-oriented points (token encryption, GDPR, non-commercial terms). Corrections to the review: a search-link-only Spotify output shrinks the expiry section but doesn't remove it (Spotify `source` rows remain); "derived identity" also needs Listened and Shares rekeyed, since both use `item_id`. Section 7 step 1 (define the prototype) in progress: the prototype's only User is the developer, friends follow soon if it's useful (`product.md` "Audience", 2026-11-14). The prototype creates the developer's Account directly in the database, no sign-up flow (ADR-0007 amended 2026-11-14). Success criteria set (`product.md` "Prototype success"), so step 1 is done. Next: decide whether to adopt the review's spikes-first order (spike A bridge, spike B matcher) and park the merge grilling. Only then resume the grilling below, or park it if the user adopts the spikes-first order.
+1. **Where spike code lives:** settle the repo layout first, or put the spikes in a throwaway folder (CLAUDE.md asks for the layout before new code).
+2. **Spike A, the bridge:** whatsmeow on the developer's account, logging only music links and their previews for a week. Answers: preview presence for Spotify links, `musicMetadata` fill, history sync depth.
+3. **Spike B, the matcher:** run spike A's real links through Deezer; measure the hit rate and how often duplicates appear. Also live-test Spotify Search with `isrc:` on client credentials (decided 2026-10-25; if it fails, Spotify output falls back to the search link).
+4. **Decide Item identity** (Decision 1 below) with those numbers, and server-or-phone for the WhatsApp session.
 
-Resume `/grilling` on **Item identity and merging** (below), in this order:
-
-1. Present the **source-ranking findings** (below) to the user, starting with the proposal to move display metadata onto `item_links` rows.
-2. Ask the user **Decision 1: is an Item a recording or a song in any version?** It was put to the user on 2026-11-03, no answer yet. Then decisions 2–6, one per turn.
-3. Settle the **Spotify link expiry** questions (below).
-4. Ask whether to add the **edge-case-tree working rule** (below) to `CLAUDE.md` or `~/.claude/rules/`.
-5. Write the merging section into ADR-0006 (also fix ADR-0005's title cleaning, see rule 1), close the question, then repo layout, then the grilling wrap-up (review Assumed, confirm shared understanding).
-
-First task when the matcher is built (decided 2026-10-25): live-test that a new development-mode Spotify app can call Search with `isrc:` using client credentials. If not, Spotify output falls back to the search link.
-
-## Open questions (for grilling)
+## Open questions
 
 - **Repo layout** inside the monorepo (folder names, where generated clients live).
-- **History sync at pairing** (raised 2026-11-10 by the external review). Ingest the Shares from WhatsApp's history sync so the Feed is full on day one? If yes, how far back. `product.md` onboarding assumes it.
+- **History sync at pairing** (raised 2026-11-10 by the external review). Ingest the Shares from WhatsApp's history sync so the Feed is full on day one? If yes, how far back. `product.md` onboarding assumes it. Spike A gives the facts.
+
+## Parked until the spikes (2026-11-14)
+
+The sections below stay as written; reopen one only when a spike shows it matters.
 
 ### Item identity and merging (ADR-0006)
 
@@ -74,9 +73,11 @@ Spotify's terms forbid storing Spotify Content "indefinitely", so `item_links` r
 
 ### Working rule proposed (not yet added)
 
+The external review advises against it: an edge-case tree with no stop makes the design grow faster than it closes. Its alternative: "an edge case earns a design rule only if it was seen in real data or the decision is hard to reverse; otherwise it goes to a Later list in one line."
+
 Proposed to the user 2026-11-03 for `CLAUDE.md` (or global `~/.claude/rules/`): "Before proposing a design rule, run an edge-case tree: find edge cases, propose a fix for each, then find the fix's own edge cases, at least 3 levels deep. Stop a branch only when it converges, is negligible (say why), or needs a product decision. Launch agents for live API checks. Present the surviving rules and the decisions, never the first idea."
 
-### Other open questions
+## Other open questions
 
 - **Messenger bridge: mautrix bridgev2 connector route** (raised 2026-11-01, decide when Messenger starts). mautrix-go's bridgev2 splits network connectors (WhatsApp, Messenger via `mautrix-meta`, Signal, Telegram…) from the Matrix connector; Beeper already runs a Matrix connector with no homeserver for its local bridges. A Quincy connector could run mautrix's maintained network connectors and emit the ADR-0009 webhook, giving new sources almost for free. Check first: size of the Matrix-side interface; whether bridgev2's database stores message text (privacy promise); licence (bridge repos believed AGPL-3.0, mautrix-go and whatsmeow MPL-2.0, unverified). Keep plain whatsmeow for the WhatsApp prototype.
 - **Unverified, check when the bridge exists:** how often WhatsApp previews are missing for Spotify links, and whether `musicMetadata` is filled for them.
