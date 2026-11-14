@@ -18,7 +18,12 @@ Repo layout settled (ADR-0010, 2026-11-14): spike A is written straight into `se
 - The User's own messages, status updates and channels are not forwarded.
 - No command API (huma) yet: pairing is a CLI flag.
 - `catch_up` = messages between `OfflineSyncPreview` and `OfflineSyncCompleted`; history sync failures are logged, not retried.
-Next: pair the developer's phone and start the week.
+**Blocked 2026-11-14: pairing fails.** After typing the code, the phone shows "Impossible de connecter l'appareil / Une erreur est survenue. Veuillez réessayer." The bridge's terminal output was not captured yet: ask the user for it first. Leads, most likely first:
+1. The bridge is blind: `waLog.Noop` hides whatsmeow's logs, and `events.PairError` and QR channel results (`timeout`, `err-*`) are not handled. Log them first, with whatsmeow at INFO during pairing (no messages flow yet, so no text can leak).
+2. The display name `"Chrome (Mac OS)"` or `PairClientChrome` is rejected (the server validates the "Browser (OS)" format); try whatsmeow's README values.
+3. The phone number format (international digits, no `+`, no leading `0`), an expired code (~160 s), or the phone already at the 4-linked-devices limit.
+4. A recent WhatsApp change to code pairing: check whatsmeow's issues for 2026-11; try QR pairing as a fallback.
+Then: pair, and start the week.
 2. **Spike B, the matcher:** run spike A's real links through Deezer; measure the hit rate and how often duplicates appear. Also live-test Spotify Search with `isrc:` on client credentials (decided 2026-10-25; if it fails, Spotify output falls back to the search link).
 3. **Decide Item identity** (Decision 1 below) with those numbers, and server-or-phone for the WhatsApp session.
 
