@@ -59,16 +59,14 @@ create table matches (
   method          text not null constraint matches_method_check
                     check (method in ('isrc', 'metadata', 'musicbrainz', 'manual')),
   confidence      match_confidence not null,
-  attempted_at    timestamptz not null default now(),
-  expires_at      timestamptz,  -- NULL: not Spotify Content (ADR-0008)
+  attempted_at    timestamptz not null default now(),  -- no expires_at: Spotify expiry deferred (ADR-0012)
   constraint matches_pkey primary key (link_id, service),
   constraint matches_link_fkey foreign key (link_id, link_service, kind)
     references links (id, service, kind) on delete cascade,
   constraint matches_matched_link_fkey foreign key (matched_link_id, service, kind)
     references links (id, service, kind) on delete cascade,
   constraint matches_service_check check (service <> link_service),
-  constraint matches_not_found_check check ((matched_link_id is null) = (confidence = 'none')),
-  constraint matches_expires_at_check check (expires_at is null or 'spotify' in (service, link_service))
+  constraint matches_not_found_check check ((matched_link_id is null) = (confidence = 'none'))
 );
 create index matches_matched_link_id_idx on matches (matched_link_id); -- fk cascade
 create index matches_retry_idx on matches (attempted_at) where matched_link_id is null; -- ~7-day retry job

@@ -28,7 +28,7 @@ Mobile app that collects the songs friends share in chat apps (WhatsApp first) i
 - Every chat source is a thin bridge sharing one webhook format (with `source`) and one command set (ADR-0009).
 - One folder per deployable; specs beside their owner; all generated code committed; one Rust package until the Tauri core (ADR-0010).
 - A Song Item is one recording (ISRC level), not the song in any version (ADR-0011).
-- Deferred on purpose for the prototype: authorization, token encryption, Tauri-specific features. Not bugs.
+- Deferred on purpose for the prototype: authorization, token encryption, Tauri-specific features, Spotify Content expiry (until a Spotify User joins, ADR-0012). Not bugs.
 
 ## State of the code
 

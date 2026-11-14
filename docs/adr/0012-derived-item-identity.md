@@ -1,6 +1,6 @@
 # 0012 — Derived Item identity: links and matches, no merges
 
-Status: Accepted (2026-11-14); amended the same day after a schema review run on real data (`docs/reviews/2026-11-14-schema-review/`). Supersedes ADR-0006's `items`, `item_links`, `shares` and `listened` tables; the rest of ADR-0006 stands.
+Status: Accepted (2026-11-14); amended the same day after a schema review run on real data (`docs/reviews/2026-11-14-schema-review/`), which also deferred the Spotify expiry. Supersedes ADR-0006's `items`, `item_links`, `shares` and `listened` tables; the rest of ADR-0006 stands.
 
 ## Context
 
@@ -30,5 +30,6 @@ Duplicates are tolerated in the prototype: the Feed shows one card per Share, an
 - Listened works across services for free: Shares from Spotify and Deezer of one recording translate to the same link of the User's service.
 - No stable Song ID. A feature that counts Songs (e.g. "most shared") groups links at query time, or a stored Song table is added later by migration from `links` and `matches`.
 - A Match's confidence is the row's own; ADR-0006's "weaker of the two rows" rule and `source` anchoring go away.
-- Spotify links read from the Spotify API remain Spotify Content with an expiry (ADR-0008); IDs taken from a shared link do not.
+- Spotify links read from the Spotify API remain Spotify Content (ADR-0008); IDs taken from a shared link do not. A Spotify `links` row created from the API stores only its ID: no ISRC and no metadata from Spotify (the ISRC stays on the link the search started from). So the row itself holds nothing to expire; the Spotify Content is the Match pointing to it.
+- **Spotify expiry deferred (decided 2026-11-14).** Only a User whose Preferred service is Spotify makes Quincy search Spotify, and the prototype's only User prefers Deezer, so no Spotify Content exists yet. When the first Spotify User joins, a migration adds a nullable `matches.expires_at`, and a job re-checks Matches before they expire; an expired Match is not served (rerun the matcher on open, else the search link). A `links` row something points to is never deleted, so Listened never blocks the expiry (schema review scenario S7). Until then the schema has no expiry column.
 - Edge-case rules 4 to 8 in `docs/progress.md` (merge triggers, undo, cascades) are closed.

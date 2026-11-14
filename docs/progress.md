@@ -23,7 +23,7 @@ Repo layout settled (ADR-0010, 2026-11-14): spike A is written straight into `se
 2. **Spike B, the matcher:** run spike A's real links through Deezer; measure the hit rate and how often duplicates appear. Also live-test Spotify Search with `isrc:` on client credentials (decided 2026-10-25; if it fails, Spotify output falls back to the search link).
 3. **Item identity decided 2026-11-14:** a Song Item is one recording (ADR-0011), derived from `links` and `matches`, never merged (ADR-0012). Still to decide: server-or-phone for the WhatsApp session.
 4. **Schema review of ADR-0012, 2026-11-14** (global skill `postgres-schema`; candidate DDL and 8 scenarios run on Postgres 18 in `docs/reviews/2026-11-14-schema-review/`). Holds: resent messages, blocked bad Matches, matcher retry, Feed read on indexes. Applied to ADR-0012: `shares.original_url` with `link_id` NULL until a short link is resolved; Feed sorted on `sent_at`; nullable display metadata. **Decisions still to take, one at a time** (recommendation in brackets):
-   1. Expired Spotify Content vs Listened: deleting an expired Spotify link a User listened to is blocked by `listened` (scenario S7). [expiry applies to the Match row, which is re-checked; a `links` row others point to is never deleted]
+   1. ~~Expired Spotify Content vs Listened~~ (scenario S7). Decided 2026-11-14: deferred until a User prefers Spotify, since only such a User makes Quincy search Spotify. Then the expiry goes on the Match, never deletes a referenced link, and an API-made Spotify link stores only its ID (ADR-0012). `expires_at` removed from `schema.sql`.
    2. One metadata source per link instead of one per field. [yes: the fields come together from Deezer or the preview]
    3. `matches.method` as `text` + `check` with only `isrc`, `metadata`, `musicbrainz`, `manual`. [yes: `source` is meaningless without stored Items; `upc` and `odesli` are unused in the prototype]
    4. Copy `account_id` into `conversations` and `shares`, kept honest by composite foreign keys, so one index serves a User's Feed. [yes]
@@ -79,10 +79,7 @@ Settled: a Song is one recording (ADR-0011), and identity is derived from `links
 
 ### Spotify link expiry (ADR-0006, ADR-0008)
 
-Spotify's terms forbid storing Spotify Content "indefinitely", so `item_links` rows for Spotify get an expiry and a re-check. The user asked (2026-11-03) for a concrete lifecycle and whether it means a cron. Draft to discuss:
-- Lifecycle: 11-03 a Deezer link is shared to a Spotify User → ISRC search on Spotify → row `(item, spotify, id, isrc, exact, attempted_at 11-03, expires_at 12-03)`. Until 12-03 the row is used as-is. Before expiry a periodic job (e.g. daily) re-checks rows that are about to expire, via the matcher queue (rate limits). If a row expires without a re-check, it is not served: re-check on open, else the search link.
-- So it's a re-check job, not a cleanup that deletes rows.
-- Open: TTL length (Spotify gives none); re-check only rows still in some Feed, deleting the rest?; is a Spotify `source` row (ID taken from a shared link, not from the API) Spotify Content at all?; what the User sees if the re-check finds a different ID or nothing.
+Deferred 2026-11-14 until a User prefers Spotify; the lifecycle (expiry on the Match, re-check job, expired Match not served) is in ADR-0012. Still open for then: TTL length (Spotify gives none); what the User sees if the re-check finds a different ID or nothing (Listened stays on the old link, so the card turns Not listened).
 
 ### Working rule proposed (not yet added)
 

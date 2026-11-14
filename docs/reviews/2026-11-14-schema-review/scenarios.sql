@@ -90,14 +90,7 @@ left join matches m on m.link_id = l.id and m.service = a.preferred_service
 where s.account_id = 1 and (s.sent_at, s.id) < ('infinity', 0)
 order by s.sent_at desc, s.id desc limit 20;
 
-\echo '== S7 expired Spotify Content: delete a Spotify link the API gave us, that a Spotify user listened to'
-insert into accounts (preferred_service) values ('spotify');
-insert into links (service, kind, external_id, isrc, metadata_source, title)
-values ('spotify', 'track', '5SPOTIFYAPIID0000000', 'GBUM71029604', null, null) returning id;
-insert into matches (link_id, link_service, kind, service, matched_link_id, method, confidence, expires_at)
-values ((select id from links where service='deezer' and external_id='3135556'), 'deezer', 'track', 'spotify', (select id from links where service='spotify' and external_id='5SPOTIFYAPIID0000000'), 'isrc', 'exact', now() + interval '30 days');
-insert into listened (account_id, link_id) values (2, (select id from links where service='spotify' and external_id='5SPOTIFYAPIID0000000'));
-delete from links where id = (select id from links where service='spotify' and external_id='5SPOTIFYAPIID0000000');
+-- S7 (expired Spotify Content blocked by listened) removed 2026-11-14: Spotify expiry deferred, it moves to the Match (ADR-0012).
 
 \echo '== S8 the Deezer short link can never be resolved (dead link)'
 select count(*) as unresolved_shares from shares where link_id is null;
