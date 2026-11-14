@@ -27,7 +27,7 @@ Repo layout settled (ADR-0010, 2026-11-14): spike A is written straight into `se
    2. ~~One metadata source per link instead of one per field.~~ Decided 2026-11-14: yes, `deezer_api` or `preview`; a Deezer API read replaces a preview's fields as a group, never the reverse (ADR-0012). MusicBrainz leaves the prototype, as the external review advised: ADR-0008's fallback step 2 is deferred (low coverage; all of spike A's Spotify links had a preview).
    3. ~~`matches.method` as `text` + `check`.~~ Decided 2026-11-14: yes, with only `isrc`, `metadata`, `manual`; `confidence` stays an enum (ADR-0012, ADR-0006 table marked superseded).
    4. ~~Copy `account_id` into `conversations` and `shares`.~~ Decided 2026-11-14: no copy; the Feed joins up to `chat_connections` (ADR-0012). Scenarios S1–S6 and S8 re-run on Postgres 18 in a throwaway database: all pass; the Feed plan sorts a User's Shares in memory, fine at this scale.
-   All four decided. Next: write the sqlx migrations from `schema.sql` (skill `postgres-schema`).
+   All four decided. **Migrations written 2026-11-14** from `schema.sql` (skill `postgres-schema`): `server/migrations/20261114000002_accounts_and_conversations.sql` and `…000003_catalogue.sql`, checked on a throwaway database after `incoming_links`. Additive only; the running spike server applies them at its next `mise run dev`. `accounts` gains `email` (unique on `lower(email)`, ADR-0007); `incoming_links` stays until spike B. Not yet decided: how a webhook finds its `chat_connections` row.
 
 ## Open questions
 
