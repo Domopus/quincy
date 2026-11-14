@@ -8,7 +8,9 @@ Friends share songs in chat apps. They get buried in conversations and never lis
 
 Built for the developer first (decided 2026-11-14): a personal tool, not a product for the market. The prototype has one User, the developer. If it proves useful, it is shared with friends soon after, so the design must allow a few Users without a rebuild; nothing is designed for strangers, scale or commercial use. Privacy stays a real requirement, because Contacts' messages pass through Quincy, but it is not launch or compliance work. Terms limited to non-commercial use (Deezer, Tidal) fit this.
 
-## Onboarding (prototype)
+## Onboarding (when friends join)
+
+Not built in the prototype: the developer's Account is created directly in the database (decided 2026-11-14). The prototype starts at step 3. Steps 1–2 are built before sharing with friends.
 
 1. Sign up with email + password.
 2. A screen says a 6-digit code was emailed; the User types it in. The code is valid 15 minutes and can be resent once a minute. The screen also offers **Resend email** and **Change email**, so it never dead-ends.

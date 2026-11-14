@@ -21,4 +21,4 @@ The old spec used Spotify login as identity. ADR-0004 removed streaming logins, 
 
 ## Consequences
 
-The server needs sending mail and password storage from the start. Google/Facebook SSO can be added later as other ways to sign in to the same Account.
+The server needs sending mail and password storage once a second User joins. The prototype has one User, so its Account is created directly in the database; the data model stays per-Account from day one, so adding sign-up later needs no migration (amended 2026-11-14). Google/Facebook SSO can be added later as other ways to sign in to the same Account.
