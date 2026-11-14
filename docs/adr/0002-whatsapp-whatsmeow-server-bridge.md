@@ -27,7 +27,7 @@ A thin Go bridge on the server runs one whatsmeow linked-device session per User
 
 ## Consequences
 
-- Unofficial client: WhatsApp can ban the User's number. Quincy only reads, which is the low-risk end; never send messages.
+- Unofficial client: WhatsApp can ban the User's number. Quincy only reads, which is the low-risk end; the prototype never sends messages. Sending replies the User approved is a later goal (product.md "Reply assistant", added 2026-11-14); it would raise the ban risk and needs a send command on the bridge.
 - Decrypted messages pass from bridge to Rust in memory — keep both on the same machine or private network; never log or store message text beyond the music links and the message written with them. The only exception is the bridge's encrypted buffer: never readable on disk, deleted once delivered. This is a privacy promise, not an optimisation.
 - Webhook failures (decided 2026-10-25): the bridge confirms receipt to WhatsApp only after Rust replies 2xx (`AddEventHandlerWithSuccessStatus` returning `false`). Otherwise it reconnects with backoff and WhatsApp resends (kept up to 30 days). A resent message can't be decrypted twice, so the decrypted copy waits in a custom whatsmeow `EventBuffer` that encrypts it with a key from the environment and deletes it once Rust accepts. Rust dedupes on (chat, message ID). Rejected: memory-only retries (songs lost during deploys or crashes) and whatsmeow's default buffer (plain text on disk).
 - One always-on connection per User: a hosting cost that grows with users.

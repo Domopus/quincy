@@ -4,6 +4,10 @@
 
 Friends share songs in chat apps. They get buried in conversations and never listened to.
 
+## Audience
+
+Built for the developer first (decided 2026-11-14): a personal tool, not a product for the market. Close friends may use it, but nothing is designed for strangers, scale or commercial use. Privacy stays a real requirement, because Contacts' messages pass through Quincy, but it is not launch or compliance work. Terms limited to non-commercial use (Deezer, Tidal) fit this.
+
 ## Onboarding (prototype)
 
 1. Sign up with email + password.
@@ -46,3 +50,5 @@ Out of the prototype: "Add all to queue" and writing to a playlist — no legiti
 - Username, arriving with the profile page. Never empty: every Account gets a random default (e.g. `quiet-otter-17`) the User can change. Not derived from the email, which would expose part of the address.
 - Albums, playlists, artists as share types.
 - Admin tool to correct wrong matches (until then: edit the DB by hand).
+
+- **Reply assistant** (a goal of the project, stated 2026-11-14): Quincy reads the User's WhatsApp messages, suggests replies, and sends one only when the User approves it. It conflicts with today's privacy principle (everything but music links is dropped) and with the bridge never sending (ADR-0002), so it needs its own design before it is built.
