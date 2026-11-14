@@ -26,3 +26,5 @@ _(Amended 2026-10-18 — previously "shared schemas live in one folder", which c
 ## Consequences
 
 Switching later is cheap: `git filter-repo` splits a folder out with its history. Reference project with the same stack: thinkter/rust-meow.
+
+OpenAPI versions (checked 2026-11-14 on the repos): `utoipa` 6 emits 3.1 only; `oapi-codegen` reads 3.1 from v2.8.0, so the webhook pair works. `huma` v2 emits 3.1 by default but also serves 3.0.3 at `/openapi-3.0.json`; `progenitor` (v0.16) reads 3.0.x only, so it must be fed that file.
