@@ -11,22 +11,17 @@ create table chat_connections (
   id         bigint generated always as identity primary key,
   account_id bigint not null references accounts on delete cascade,
   source     text not null constraint chat_connections_source_check check (source in ('whatsapp')),
-  created_at timestamptz not null default now(),
-  constraint chat_connections_id_account_id_key unique (id, account_id)
+  created_at timestamptz not null default now()
 );
 create index chat_connections_account_id_idx on chat_connections (account_id); -- fk; "my connections"
 
 create table conversations (
   id                 bigint generated always as identity primary key,
-  chat_connection_id bigint not null,
-  account_id         bigint not null,  -- copy, kept honest by the fk, for the Feed index on shares
+  chat_connection_id bigint not null references chat_connections on delete cascade,
   external_id        text not null,
   kind               text not null constraint conversations_kind_check check (kind in ('direct', 'group')),
   name               text,  -- NULL: the bridge hasn't sent a name yet
-  constraint conversations_chat_connection_id_account_id_fkey
-    foreign key (chat_connection_id, account_id) references chat_connections (id, account_id) on delete cascade,
-  constraint conversations_chat_connection_id_external_id_key unique (chat_connection_id, external_id),
-  constraint conversations_id_account_id_key unique (id, account_id)
+  constraint conversations_chat_connection_id_external_id_key unique (chat_connection_id, external_id)
 );
 
 create type match_confidence as enum ('none', 'low', 'high', 'exact');
@@ -73,8 +68,7 @@ create index matches_retry_idx on matches (attempted_at) where matched_link_id i
 
 create table shares (
   id              bigint generated always as identity primary key,
-  account_id      bigint not null,
-  conversation_id bigint not null,
+  conversation_id bigint not null references conversations on delete cascade,
   message_id      text not null,
   original_url    text not null,  -- as sent; dedup key, survives an unresolved short link
   link_id         bigint references links on delete restrict,  -- NULL: short link not resolved yet
@@ -82,11 +76,9 @@ create table shares (
   message         text,  -- NULL: the Contact wrote nothing else
   sent_at         timestamptz not null,
   received_at     timestamptz not null default now(),
-  constraint shares_conversation_id_account_id_fkey
-    foreign key (conversation_id, account_id) references conversations (id, account_id) on delete cascade,
   constraint shares_conversation_id_message_id_original_url_key unique (conversation_id, message_id, original_url)
 );
-create index shares_account_id_sent_at_id_idx on shares (account_id, sent_at, id); -- Feed keyset
+create index shares_conversation_id_sent_at_id_idx on shares (conversation_id, sent_at, id); -- Feed keyset, per conversation
 create index shares_link_id_idx on shares (link_id); -- fk restrict
 create index shares_unresolved_idx on shares (received_at) where link_id is null; -- resolve job
 

@@ -4,7 +4,8 @@
 begin;
 create schema review;
 set search_path = review;
-\i /review/schema.sql  -- copy schema.sql into the container first: docker compose cp docs/reviews/2026-11-14-schema-review/schema.sql postgres:/review/schema.sql
+-- Copy schema.sql into the container first: docker compose cp docs/reviews/2026-11-14-schema-review/schema.sql postgres:/review/schema.sql
+\i /review/schema.sql
 
 \echo '== Pass 1: fk without a leading index'
 select c.conrelid::regclass as table_name, c.conname as fk
@@ -23,27 +24,27 @@ where c.contype = 'u' and c.connamespace = 'review'::regnamespace
 -- Setup: the developer (Deezer), one WhatsApp connection, one group.
 insert into accounts (preferred_service) values ('deezer');
 insert into chat_connections (account_id, source) values (1, 'whatsapp');
-insert into conversations (chat_connection_id, account_id, external_id, kind)
-values (1, 1, '120363000000000000@g.us', 'group');
+insert into conversations (chat_connection_id, external_id, kind)
+values (1, '120363000000000000@g.us', 'group');
 
 \echo '== S1 Spotify share arrives live, then again in catch-up'
 insert into links (service, kind, external_id, title, artist, metadata_source)
 values ('spotify', 'track', '7A4n3q3BdviQHiq9AOGD7i', 'Feel The Cold', 'Foy Vance', 'preview')
 on conflict (service, kind, external_id) do update set external_id = excluded.external_id returning id;
-insert into shares (account_id, conversation_id, message_id, original_url, link_id, sender_hash, sent_at)
-values (1, 1, 'MSG1', 'https://open.spotify.com/track/7A4n3q3BdviQHiq9AOGD7i?si=x', (select id from links where service='spotify' and external_id='7A4n3q3BdviQHiq9AOGD7i'), repeat('a', 32), '2026-10-31 12:00+00')
+insert into shares (conversation_id, message_id, original_url, link_id, sender_hash, sent_at)
+values (1, 'MSG1', 'https://open.spotify.com/track/7A4n3q3BdviQHiq9AOGD7i?si=x', (select id from links where service='spotify' and external_id='7A4n3q3BdviQHiq9AOGD7i'), repeat('a', 32), '2026-10-31 12:00+00')
 on conflict do nothing;
 insert into links (service, kind, external_id, title, artist, metadata_source)
 values ('spotify', 'track', '7A4n3q3BdviQHiq9AOGD7i', 'Feel The Cold', 'Foy Vance', 'preview')
 on conflict (service, kind, external_id) do update set external_id = excluded.external_id returning id;
-insert into shares (account_id, conversation_id, message_id, original_url, link_id, sender_hash, sent_at)
-values (1, 1, 'MSG1', 'https://open.spotify.com/track/7A4n3q3BdviQHiq9AOGD7i?si=x', (select id from links where service='spotify' and external_id='7A4n3q3BdviQHiq9AOGD7i'), repeat('a', 32), '2026-10-31 12:00+00')
+insert into shares (conversation_id, message_id, original_url, link_id, sender_hash, sent_at)
+values (1, 'MSG1', 'https://open.spotify.com/track/7A4n3q3BdviQHiq9AOGD7i?si=x', (select id from links where service='spotify' and external_id='7A4n3q3BdviQHiq9AOGD7i'), repeat('a', 32), '2026-10-31 12:00+00')
 on conflict do nothing;
 select count(*) as shares_after_resend from shares;
 
 \echo '== S2 Deezer short link: share stored before resolution, resolved later'
-insert into shares (account_id, conversation_id, message_id, original_url, sender_hash, sent_at)
-values (1, 1, 'MSG2', 'https://link.deezer.com/s/34KhGNcQjFqeMoUDfvvWj', repeat('b', 32), '2026-10-22 09:00+00');
+insert into shares (conversation_id, message_id, original_url, sender_hash, sent_at)
+values (1, 'MSG2', 'https://link.deezer.com/s/34KhGNcQjFqeMoUDfvvWj', repeat('b', 32), '2026-10-22 09:00+00');
 insert into links (service, kind, external_id, isrc, title, artist, duration_ms, metadata_source)
 values ('deezer', 'track', '3135556', 'GBUM71029604', 'Missing You', 'LEISURE', 201000, 'deezer_api') returning id;
 update shares set link_id = (select id from links where service='deezer' and external_id='3135556') where message_id = 'MSG2';
@@ -81,13 +82,15 @@ insert into listened (account_id, link_id) values (1, (select id from links wher
 set enable_seqscan = off;
 explain (costs off)
 select s.id, s.sent_at, coalesce(m.matched_link_id, case when l.service = a.preferred_service then l.id end) as open_link,
-       exists (select 1 from listened li where li.account_id = s.account_id
+       exists (select 1 from listened li where li.account_id = a.id
                and li.link_id = coalesce(m.matched_link_id, l.id)) as listened
 from shares s
-join accounts a on a.id = s.account_id
+join conversations c on c.id = s.conversation_id
+join chat_connections cc on cc.id = c.chat_connection_id
+join accounts a on a.id = cc.account_id
 left join links l on l.id = s.link_id
 left join matches m on m.link_id = l.id and m.service = a.preferred_service
-where s.account_id = 1 and (s.sent_at, s.id) < ('infinity', 0)
+where cc.account_id = 1 and (s.sent_at, s.id) < ('infinity', 0)
 order by s.sent_at desc, s.id desc limit 20;
 
 -- S7 (expired Spotify Content blocked by listened) removed 2026-11-14: Spotify expiry deferred, it moves to the Match (ADR-0012).
