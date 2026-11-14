@@ -28,7 +28,7 @@ depends = ["db"]
 run = "cargo run --manifest-path server/Cargo.toml --bin quincy-server"
 
 [tasks.bridge]
-description = "Run the WhatsApp bridge; first run: mise run bridge -- -pair 33612345678"
+description = "Run the WhatsApp bridge; first run shows a QR code, or pairs by code with: mise run bridge -- -pair 33612345678"
 dir = "bridges/whatsapp"
 run = "go run ./cmd/quincy-whatsapp"
 

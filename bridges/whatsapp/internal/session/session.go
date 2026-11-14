@@ -8,9 +8,11 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"os"
 	"sync/atomic"
 	"time"
 
+	"github.com/mdp/qrterminal/v3"
 	"go.mau.fi/whatsmeow"
 	"go.mau.fi/whatsmeow/store/sqlstore"
 	"go.mau.fi/whatsmeow/types"
@@ -30,7 +32,8 @@ type Config struct {
 	// StorePath is the SQLite file holding the device keys, the only thing the bridge stores.
 	StorePath    string
 	ConnectionID string
-	// PairPhone, when the store has no device yet, is the number to pair with (international format, digits only).
+	// PairPhone, when the store has no device yet, is the number to pair with by code
+	// (international format, digits only). Empty means pairing by QR code.
 	PairPhone string
 }
 
@@ -53,12 +56,19 @@ func Run(ctx context.Context, cfg Config, sender Sender) error {
 		return err
 	}
 
-	client := whatsmeow.NewClient(device, waLog.Noop)
+	pairing := device.ID == nil
+	// whatsmeow's own logs at DEBUG while pairing, to see every node WhatsApp sends.
+	clientLog, pairingDone := waLog.Noop, &atomic.Bool{}
+	if pairing {
+		clientLog, pairingDone = newPairingLog()
+	}
+	client := whatsmeow.NewClient(device, clientLog)
 	h := &handler{ctx: ctx, client: client, sender: sender, connectionID: cfg.ConnectionID, loggedOut: make(chan struct{})}
 	client.AddEventHandlerWithSuccessStatus(h.handle)
 
-	if client.Store.ID == nil {
-		if err := pair(ctx, client, cfg.PairPhone); err != nil {
+	var pairFailed <-chan error
+	if pairing {
+		if pairFailed, err = pair(ctx, client, cfg.PairPhone, pairingDone); err != nil {
 			return err
 		}
 	} else if err := client.Connect(); err != nil {
@@ -69,34 +79,67 @@ func Run(ctx context.Context, cfg Config, sender Sender) error {
 	select {
 	case <-ctx.Done():
 		return nil
+	case err := <-pairFailed:
+		return err
 	case <-h.loggedOut:
 		return ErrLoggedOut
 	}
 }
 
-// pair links this bridge to the phone with an 8-character code.
-func pair(ctx context.Context, client *whatsmeow.Client, phone string) error {
-	if phone == "" {
-		return errors.New("no paired device yet: pass the phone number to pair with")
-	}
+// pair links this bridge to the phone with an 8-character code, or with a QR
+// code when phone is empty. It sets done when pairing ends; the returned
+// channel gets the reason if it failed. On success the bridge keeps running:
+// whatsmeow must reconnect at once to log in, or WhatsApp drops the new device.
+func pair(ctx context.Context, client *whatsmeow.Client, phone string, done *atomic.Bool) (<-chan error, error) {
 	qr, err := client.GetQRChannel(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if err := client.Connect(); err != nil {
-		return err
+		return nil, err
 	}
-	<-qr // the first QR event means the connection is ready for code pairing
-	code, err := client.PairPhone(ctx, phone, true, whatsmeow.PairClientChrome, "Chrome (Mac OS)")
-	if err != nil {
-		return fmt.Errorf("pairing code: %w", err)
+	// The first QR code means the connection is ready for code pairing.
+	first := <-qr
+	if first.Event != whatsmeow.QRChannelEventCode {
+		return nil, fmt.Errorf("pairing did not start: %s %v", first.Event, first.Error)
 	}
-	fmt.Printf("\nOn the phone: WhatsApp > Linked devices > Link with phone number, then type: %s\n\n", code)
+	if phone == "" {
+		showQR(first.Code)
+	} else {
+		code, err := client.PairPhone(ctx, phone, true, whatsmeow.PairClientChrome, "Chrome (Mac OS)")
+		if err != nil {
+			return nil, fmt.Errorf("pairing code: %w", err)
+		}
+		fmt.Printf("\nOn the phone: WhatsApp > Linked devices > Link with phone number, then type: %s\n\n", code)
+	}
+
+	failed := make(chan error, 1)
 	go func() {
-		for range qr { // drain; pairing ends with PairSuccess or a timeout
+		for item := range qr {
+			switch item.Event {
+			case whatsmeow.QRChannelEventCode: // the previous QR code expired
+				if phone == "" {
+					showQR(item.Code)
+				}
+			case whatsmeow.QRChannelSuccess.Event:
+				done.Store(true)
+				slog.Info("pairing succeeded")
+			case whatsmeow.QRChannelEventPasskeyRequest, whatsmeow.QRChannelEventPasskeyResponse:
+				// The bridge has no authenticator to answer a passkey step.
+				slog.Warn("WhatsApp asked for a passkey step", "event", item.Event)
+			default: // error, timeout, err-*: the channel closes after this
+				done.Store(true)
+				slog.Error("pairing failed", "event", item.Event, "err", item.Error)
+				failed <- fmt.Errorf("pairing failed: %s", item.Event)
+			}
 		}
 	}()
-	return nil
+	return failed, nil
+}
+
+func showQR(code string) {
+	fmt.Println("\nOn the phone: WhatsApp > Linked devices > Link a device, then scan:")
+	qrterminal.GenerateHalfBlock(code, qrterminal.L, os.Stdout)
 }
 
 type handler struct {
@@ -128,6 +171,8 @@ func (h *handler) handle(evt any) bool {
 		slog.Info("caught up", "missed_events", e.Count)
 	case *events.PairSuccess:
 		slog.Info("paired", "device", e.ID.String())
+	case *events.PairError:
+		slog.Error("pair error", "device", e.ID.String(), "platform", e.Platform, "business", e.BusinessName != "", "err", e.Error)
 	case *events.Connected:
 		slog.Info("connected")
 	case *events.Disconnected:

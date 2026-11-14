@@ -37,6 +37,6 @@ Layout in ADR-0010: `server/` (Rust), `bridges/<source>/` (Go), `app/` (Tauri, l
 - `mise run db` — start the dev Postgres (OrbStack or Docker).
 - `mise run secrets` — create `.env` with random `BRIDGE_SECRET` and `SENDER_HASH_KEY`, once. Never commit it: a known hash key lets anyone recover senders by hashing every phone number.
 - `mise run dev` — run the server on `127.0.0.1:8080`; migrations run at start.
-- `mise run bridge` — run the WhatsApp bridge against the local server. First run pairs by code: `mise run bridge -- -pair 33612345678`. Device keys live in `~/Library/Application Support/Quincy/whatsapp.db` (folder `0700`), never in the repo.
+- `mise run bridge` — run the WhatsApp bridge against the local server. First run pairs: it shows a QR code to scan, or pairs by code with `mise run bridge -- -pair 33612345678`. Device keys live in `~/Library/Application Support/Quincy/whatsapp.db` (folder `0700`), never in the repo.
 - `mise run gen` — regenerate `server/openapi.json`, the sqlx offline cache (`server/.sqlx/`) and the bridge's Go client (`bridges/whatsapp/internal/quincyapi/`). Run after changing an endpoint or a query.
 - `mise run check` — server: fmt, clippy (`-D warnings`), tests; integration tests use `#[sqlx::test]` (one throwaway database per test). Bridge: gofmt, vet, tests. Generated specs and clients are committed and regenerated with `mise run gen`; never edit them by hand.

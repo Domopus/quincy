@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-	phone := flag.String("pair", "", "phone number to pair with, digits only (first run)")
+	phone := flag.String("pair", "", "phone number to pair with by code, digits only (first run; without it, pair by QR code)")
 	flag.Parse()
 
 	secret := os.Getenv("BRIDGE_SECRET")
