@@ -1,6 +1,6 @@
 # 0006 — Catalogue data model: one row per (item, service)
 
-Status: Accepted (2026-10-18). Names settled 2026-10-25: Item, `items`, `item_links`. `conversations` added 2026-11-03.
+Status: Superseded in part by ADR-0012 (2026-11-14): `items`, `item_links`, `shares` and `listened` are replaced by `links` and `matches`, with no merges. `conversations`, the `method` and `confidence` enums, and the Spotify expiry still stand. Accepted 2026-10-18; names settled 2026-10-25; `conversations` added 2026-11-03.
 
 ## Context
 

@@ -22,7 +22,7 @@ Mobile app that collects the songs friends share in chat apps (WhatsApp first) i
 - Rust server holds all logic; Go only for the bridge (ADR-0003).
 - No streaming write APIs for the prototype: songs open in the user's app via links (ADR-0004).
 - Cross-service song matching is our own code: ISRC first, then cleaned metadata + duration (ADR-0005).
-- Catalogue: one row per (item, service); translation confidence = the weaker of the two rows (ADR-0006).
+- Catalogue: `links` (one per service ID) and `matches` between them; an Item is derived, never stored or merged (ADR-0012, supersedes part of ADR-0006).
 - Identity is an email Account; chat sources are Chat connections attached to it; streaming is only a Preferred service, no login (ADR-0007).
 - Spotify data never goes to another service; Spotify-link details come from the WhatsApp link preview (ADR-0008).
 - Every chat source is a thin bridge sharing one webhook format (with `source`) and one command set (ADR-0009).
