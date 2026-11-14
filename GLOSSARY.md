@@ -12,5 +12,5 @@ Domain terms only — no implementation details.
 - **Feed** — the User's list of Shares, filterable by Listened / Not listened.
 - **Listened** — an Item the User has opened (marked automatically) or marked by hand. Belongs to the User + Item, not to one Share: if two Contacts shared the same Song, listening once marks both. Can be toggled back to Not listened.
 - **Item** — the piece of music a Share points to, independent of streaming service. Has a kind: Song (the only kind in the prototype), later Album, Playlist, Artist. Not "Release": in the industry that means a label's product (album, single, EP), which a song or playlist isn't.
-- **Song** — the Item kind for a single piece of music. The word the User sees.
+- **Song** — the Item kind for a single piece of music: one recording, the level an ISRC identifies, so a remaster, live, mono or clean/explicit version is another Song (ADR-0011). The word the User sees.
 - **Match** — the link between an Item and its ID on one streaming service, with a confidence level.
