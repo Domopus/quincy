@@ -9,7 +9,7 @@ Friends share songs in chat apps. They get buried in conversations and never lis
 1. Sign up with email + password.
 2. A screen says a 6-digit code was emailed; the User types it in. The code is valid 15 minutes and can be resent once a minute. The screen also offers **Resend email** and **Change email**, so it never dead-ends.
 3. Choose a Preferred service (Deezer or Spotify): one tap, an easy win before the hard step.
-4. Add a Chat connection (WhatsApp pairing), which ends on the Feed where the first Shares appear.
+4. Add a Chat connection (WhatsApp pairing), which ends on the Feed where the first Shares appear. First Shares at once only if the pairing history sync is ingested: open, see `docs/progress.md`.
 
 No username in the prototype: no screen shows one.
 

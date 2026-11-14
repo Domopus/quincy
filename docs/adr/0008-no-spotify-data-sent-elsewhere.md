@@ -9,7 +9,7 @@ To open a shared Spotify link on Deezer, the matcher (ADR-0005) needs the song's
 ## Decision
 
 - Quincy never takes data from Spotify (Web API, oEmbed or the track page) to query another service.
-- For a shared Spotify link, song details come from the **WhatsApp link preview** the Contact's app attaches to the message (title; description "Artist · Album · Song · Year"). The bridge forwards it in the webhook.
+- For a shared Spotify link, song details come from the **WhatsApp link preview** the Contact's app attaches to the message (title; description "Artist · Album · Song · Year"). The bridge forwards it in the webhook. The format is confirmed on the track page's `og:` tags (one manual check, 2026-11-10); what WhatsApp actually puts in the message is unverified until the bridge runs.
 - A link shared on the User's own Preferred service opens as-is: no matching.
 
 ## Rejected

@@ -9,7 +9,7 @@ A link shared from any service must open on the User's service, every match shou
 ## Decision
 
 - **`items`** — one row per piece of music, with a `kind` enum (`song`, `album`, `playlist`, `artist`; only `song` in the prototype). Holds display metadata (title, artist, cover, duration) and the cross-service code when known: ISRC for tracks, UPC for albums.
-- **`item_links`** — `(item_id, kind, service, external_id, confidence, method, attempted_at)`. One row per service; unique on `(service, kind, external_id)`, because a service's IDs are only unique per kind (a Deezer track and a Deezer album can share a number). `kind` repeats the item's, kept consistent by a composite foreign key `(item_id, kind)` (corrected 2026-10-25). Rows for the same item share `item_id`.
+- **`item_links`** — one row per Match (glossary): `(item_id, kind, service, external_id, confidence, method, attempted_at)`. One row per service; unique on `(service, kind, external_id)`, because a service's IDs are only unique per kind (a Deezer track and a Deezer album can share a number). `kind` repeats the item's, kept consistent by a composite foreign key `(item_id, kind)` (corrected 2026-10-25). Rows for the same item share `item_id`.
 - **`conversations`** — `(id, chat_connection, external_id, kind, name)`, `kind` = `direct` | `group`; unique on `(chat_connection, external_id)`. The name is refreshed from each webhook (added 2026-11-03: group chats are where many songs are shared, and the Feed shows the name).
 - **`shares`** — `(user, contact, item_id, original_url, conversation_id, message, received_at)`, plus `(source, message_id)` from the bridge, unique per conversation so resent messages are dropped (ADR-0009).
 - **`listened`** — `(user, item_id, listened_at)`: per User + item, not per Share.
@@ -49,3 +49,4 @@ Spotify rows are Spotify Content: they get an expiry and are re-checked, never k
 
 - Playlists can't be matched as a whole across services; they'd need track-by-track conversion (later).
 - Open: how two items get merged when a match reveals they're the same.
+- Open: display metadata may move from `items` to each `item_links` row with its source (proposed 2026-11-03, see `docs/progress.md`). Until decided, the `items` columns above are not final.

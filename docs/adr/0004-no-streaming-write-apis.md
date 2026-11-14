@@ -6,7 +6,7 @@ Status: Accepted (2026-10-18)
 
 The original idea was "Add to queue" on Spotify. Facts as of Oct 2026:
 - Deezer has no queue/playback endpoint, and has refused new developer apps since ~Aug 2024 — so no official writes at all (not even playlists).
-- Spotify (Feb 2026): new dev apps need Premium, 5 users max; extended access needs 250k MAU. ISRC removed from track objects.
+- Spotify (Feb 2026): new dev apps need Premium, 5 users max; extended access needs 250k MAU. ISRC removed from track objects, then restored in March 2026 (corrected 2026-11-14, see ADR-0005).
 - Deezer's public read API still works without an app (search, metadata, ISRC, previews).
 
 ## Decision

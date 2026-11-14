@@ -23,6 +23,7 @@ First task when the matcher is built (decided 2026-10-25): live-test that a new 
 ## Open questions (for grilling)
 
 - **Repo layout** inside the monorepo (folder names, where generated clients live).
+- **History sync at pairing** (raised 2026-11-10 by the external review). Ingest the Shares from WhatsApp's history sync so the Feed is full on day one? If yes, how far back. `product.md` onboarding assumes it.
 
 ### Item identity and merging (ADR-0006)
 
