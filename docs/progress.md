@@ -12,7 +12,7 @@ Review points still worth keeping in mind: the whatsmeow session store is the as
 
 Spike code lives in a throwaway `spikes/` folder (decided 2026-11-14, see CLAUDE.md); the repo layout waits until after the spikes.
 
-1. **Spike A, the bridge:** whatsmeow on the developer's account, logging only music links and their previews for a week. Answers: preview presence for Spotify links, `musicMetadata` fill, history sync depth.
+1. **Spike A, the bridge:** whatsmeow on the developer's account, logging only music links and their previews for a week. Runs on the developer's Mac (decided 2026-11-14): home IP, no server; WhatsApp resends what arrived while the Mac slept, which also tests catch-up. Server conditions (always-on, datacenter IP) are tested later, with the server-or-phone choice. Answers: preview presence for Spotify links, `musicMetadata` fill, history sync depth.
 2. **Spike B, the matcher:** run spike A's real links through Deezer; measure the hit rate and how often duplicates appear. Also live-test Spotify Search with `isrc:` on client credentials (decided 2026-10-25; if it fails, Spotify output falls back to the search link).
 3. **Decide Item identity** (Decision 1 below) with those numbers, and server-or-phone for the WhatsApp session.
 
