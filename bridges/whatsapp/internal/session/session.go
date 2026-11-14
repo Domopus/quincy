@@ -191,6 +191,10 @@ func (h *handler) forward(evt *events.Message, origin quincyapi.Origin) bool {
 	if !ok {
 		return true
 	}
+	return h.send(msg)
+}
+
+func (h *handler) send(msg quincyapi.IncomingMessage) bool {
 	ctx, cancel := context.WithTimeout(h.ctx, 15*time.Second)
 	defer cancel()
 	if err := h.sender.Send(ctx, msg); err != nil {
@@ -202,25 +206,32 @@ func (h *handler) forward(evt *events.Message, origin quincyapi.Origin) bool {
 }
 
 // forwardHistory sends the messages of a history sync blob. They are not
-// resent by WhatsApp, so a failure is only logged.
+// resent by WhatsApp, so a failure is only logged. "messages" matches the
+// server's count; skipped ones (the User's own, status, channels) are apart.
 func (h *handler) forwardHistory(evt *events.HistorySync) {
-	sent, failed := 0, 0
+	sent, skipped, unparsed, failed := 0, 0, 0, 0
 	for _, conv := range evt.Data.GetConversations() {
 		chat, err := types.ParseJID(conv.GetID())
 		if err != nil {
 			continue
 		}
 		for _, item := range conv.GetMessages() {
-			msg, err := h.client.ParseWebMessage(chat, item.GetMessage())
+			parsed, err := h.client.ParseWebMessage(chat, item.GetMessage())
 			if err != nil {
+				unparsed++
 				continue
 			}
-			if h.forward(msg, quincyapi.HistorySync) {
+			msg, ok := toIncoming(parsed, quincyapi.HistorySync, h.connectionID)
+			switch {
+			case !ok:
+				skipped++
+			case h.send(msg):
 				sent++
-			} else {
+			default:
 				failed++
 			}
 		}
 	}
-	slog.Info("history sync", "type", evt.Data.GetSyncType().String(), "messages", sent, "failed", failed)
+	slog.Info("history sync", "type", evt.Data.GetSyncType().String(),
+		"messages", sent, "skipped", skipped, "unparsed", unparsed, "failed", failed)
 }
