@@ -1,6 +1,6 @@
 # 0010 — Repo layout: one folder per deployable, specs beside their owner
 
-Status: Accepted (2026-11-14)
+Status: Accepted (2026-11-14). Amended same day: `app/` is a web app first, Tauri later (ADR-0013).
 
 ## Context
 
@@ -20,7 +20,7 @@ quincy/
 │       ├── cmd/           quincy-whatsapp/ (bridge), openapi/ (spec exporter)
 │       ├── internal/      session/, webhook/, commands/, quincyapi/ (generated)
 │       └── openapi-3.0.json  command spec (huma), committed
-├── app/                   Tauri (src/ TS, src-tauri/ Rust), created when needed
+├── app/                   web app (src/ React TS); src-tauri/ added with Tauri (ADR-0013)
 ├── docs/
 ├── mise.toml              tool versions + tasks: gen, check, db, dev
 ├── compose.yaml           dev Postgres

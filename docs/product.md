@@ -39,7 +39,7 @@ Out of the prototype: "Add all to queue" and writing to a playlist — no legiti
 
 ## Targets
 
-- **Platforms:** Android (GrapheneOS first), then iOS. Built with Tauri.
+- **Platforms:** Android (GrapheneOS first), then iOS. An installable web app first (React), wrapped with Tauri later (ADR-0013, 2026-11-14).
 - **Chat sources:** WhatsApp → Messenger, others later.
 - **Streaming services:** Deezer and Spotify, both as shared links and as Preferred service. Apple Music, Tidal, YouTube Music later (limits in `docs/progress.md`).
 - **Share types:** songs first; albums, playlists, artists later.

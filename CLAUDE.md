@@ -28,11 +28,12 @@ Mobile app that collects the songs friends share in chat apps (WhatsApp first) i
 - Every chat source is a thin bridge sharing one webhook format (with `source`) and one command set (ADR-0009).
 - One folder per deployable; specs beside their owner; all generated code committed; one Rust package until the Tauri core (ADR-0010).
 - A Song Item is one recording (ISRC level), not the song in any version (ADR-0011).
+- Installable web app first (React, TypeScript, Vite); Tauri wraps it later (ADR-0013).
 - Deferred on purpose for the prototype: authorization, token encryption, Tauri-specific features, Spotify Content expiry (until a Spotify User joins, ADR-0012). Not bugs.
 
 ## State of the code
 
-Layout in ADR-0010: `server/` (Rust), `bridges/<source>/` (Go), `app/` (Tauri, later). Commands:
+Layout in ADR-0010: `server/` (Rust), `bridges/<source>/` (Go), `app/` (web app, ADR-0013). Commands:
 
 - `mise install` — install Go, Rust and sqlx-cli at the pinned versions.
 - `mise run db` — start the dev Postgres (OrbStack or Docker).

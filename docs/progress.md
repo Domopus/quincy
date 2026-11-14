@@ -29,6 +29,10 @@ Repo layout settled (ADR-0010, 2026-11-14): spike A is written straight into `se
    4. ~~Copy `account_id` into `conversations` and `shares`.~~ Decided 2026-11-14: no copy; the Feed joins up to `chat_connections` (ADR-0012). Scenarios S1–S6 and S8 re-run on Postgres 18 in a throwaway database: all pass; the Feed plan sorts a User's Shares in memory, fine at this scale.
    All four decided. **Migrations written 2026-11-14** from `schema.sql` (skill `postgres-schema`): `server/migrations/20261114000002_accounts_and_conversations.sql` and `…000003_catalogue.sql`, checked on a throwaway database after `incoming_links`. Additive only; the running spike server applies them at its next `mise run dev`. `accounts` gains `email` (unique on `lower(email)`, ADR-0007); `incoming_links` stays until spike B. How a webhook finds its `chat_connections` row: decided 2026-11-14 (ADR-0009: Rust-issued `connection_id`, hashed own JID unique per source, logout keeps the row, unknown id → 404 and drop); migration `…000004_chat_connection_pairing.sql`. Later: sign webhook bodies with HMAC (WAHA, GOWA do), with authorization.
 
+## Frontend (started 2026-11-14, while spike A runs)
+
+Server and bridge untouched until ~2026-11-21. Decided: WhatsApp session on the server for the prototype (ADR-0002); installable web app first in React, wrapped with Tauri later (ADR-0013). Next: Feed frames from Figma (skill `figma-extract-spec`; the Figma MCP server was added 2026-11-14 after a first attempt found no Figma tools) → check them against ADR-0012 and the glossary → `DESIGN.md` → Feed in `app/` on fake data following ADR-0012 (`shares` → `links` → `matches` → `listened`; sort on `sent_at`; a Share with `link_id` NULL for an unresolved short link; NULL display metadata). No Feed endpoint yet.
+
 ## Open questions
 
 - **History sync at pairing** (raised 2026-11-10 by the external review). Ingest the Shares from WhatsApp's history sync so the Feed is full on day one? If yes, how far back. `product.md` onboarding assumes it. Spike A gives the facts.
