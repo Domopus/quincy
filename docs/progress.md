@@ -8,6 +8,8 @@ Re-framing the project after a 6-month break; grilling the open questions. No ne
 
 ## Next step
 
+**First (added 2026-11-10 by Claude Fable 5, not Opus 5.5):** an external review of the whole plan is in `docs/reviews/2026-11-10-fable-review.md`. It is opinion, not decisions. Discuss it with the user before resuming the grilling below; its section 7 proposes a different order of work (define the prototype, two spikes, then Item identity). The rest of this file is unchanged.
+
 Resume `/grilling` on **Item identity and merging** (below), in this order:
 
 1. Present the **source-ranking findings** (below) to the user, starting with the proposal to move display metadata onto `item_links` rows.
