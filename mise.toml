@@ -27,11 +27,17 @@ description = "Run the server (migrations run at start)"
 depends = ["db"]
 run = "cargo run --manifest-path server/Cargo.toml --bin quincy-server"
 
+[tasks.bridge]
+description = "Run the WhatsApp bridge; first run: mise run bridge -- -pair 33612345678"
+dir = "bridges/whatsapp"
+run = "go run ./cmd/quincy-whatsapp"
+
 [tasks.gen]
 description = "Regenerate every committed spec and client (ADR-0010)"
 run = [
   "cargo run -q --manifest-path server/Cargo.toml --bin openapi > server/openapi.json",
   "cd server && cargo sqlx prepare -- --all-targets",
+  "cd bridges/whatsapp && go generate ./...",
 ]
 
 [tasks.check]
@@ -41,4 +47,5 @@ run = [
   "cargo fmt --manifest-path server/Cargo.toml --check",
   "cargo clippy --manifest-path server/Cargo.toml --all-targets -- -D warnings",
   "cargo test --manifest-path server/Cargo.toml",
+  "cd bridges/whatsapp && test -z \"$(gofmt -l .)\" && go vet ./... && go test ./...",
 ]

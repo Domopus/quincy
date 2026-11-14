@@ -10,7 +10,7 @@ Quincy must see links sent in all of the User's WhatsApp conversations, includin
 
 A thin Go bridge on the server runs one whatsmeow linked-device session per User. It knows nothing about Quincy: no Shares, no Users, no matching.
 
-- **Storage:** only whatsmeow's own session store (device keys), so restarts never force a re-pair, plus the encrypted buffer of messages Rust hasn't accepted yet (see Consequences). No Quincy data.
+- **Storage:** only whatsmeow's own session store (device keys; a SQLite file outside the repo, pure-Go driver, decided 2026-11-14), so restarts never force a re-pair, plus the encrypted buffer of messages Rust hasn't accepted yet (see Consequences). No Quincy data.
 - **Incoming messages → webhook:** for every message, the bridge POSTs (source, user, sender, conversation, text, link preview, time; shared format per ADR-0009) to the Rust server's `POST /internal/messages`, then forgets it. Rust filters for music URLs and drops everything else (ADR-0003). Connection lost/restored is sent the same way.
 - **Commands → bridge API:** Rust calls the bridge to start pairing (returns the 8-char code), unlink, and get status. The bridge also reports a logout by WhatsApp to Rust, which prompts the User to reconnect (added 2026-10-25).
 - **Contracts (ADR-0001):** Rust owns the webhook endpoint (`utoipa` → generated Go client, `oapi-codegen`); Go owns the commands API (`huma` → generated Rust client, `progenitor`). The bridge is configured with Rust's URL and a shared secret.

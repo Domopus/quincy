@@ -1,0 +1,6 @@
+# Client for the server's webhook, generated from server/openapi.json (ADR-0010).
+package: quincyapi
+output: quincyapi.gen.go
+generate:
+  models: true
+  client: true
