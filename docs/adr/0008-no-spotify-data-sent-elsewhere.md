@@ -1,6 +1,6 @@
 # 0008 — Spotify data never leaves for another service
 
-Status: Accepted (2026-10-25)
+Status: Accepted (2026-10-25); fallback step 2 (MusicBrainz) deferred 2026-11-14.
 
 ## Context
 
@@ -25,5 +25,5 @@ To open a shared Spotify link on Deezer, the matcher (ADR-0005) needs the song's
 - The other direction is allowed by the written terms: a Deezer song's ISRC may be looked up in Spotify Search to build a Spotify link (prototype supports Deezer + Spotify, decided 2026-10-25). Stored Deezer ↔ Spotify mappings are Spotify Content: they get an expiry and are re-checked, never kept forever.
 - Some messages arrive without a preview. Fallback order (decided 2026-10-25):
   1. WhatsApp preview.
-  2. MusicBrainz lookup by the Spotify URL (free, CC0, 1 req/s; gives title, artist, duration, often ISRC). Partial coverage: 1 of 3 tracks in a quick test.
+  2. MusicBrainz lookup by the Spotify URL (free, CC0, 1 req/s; gives title, artist, duration, often ISRC). Partial coverage: 1 of 3 tracks in a quick test. **Deferred 2026-11-14, not in the prototype:** low coverage (also 6% of niche tracks by ISRC, 2026-11-03), and all 5 Spotify links of spike A's first day had a preview. Reopen if spike A shows previews missing. Until then a link without a preview goes straight to step 3.
   3. Nothing found: the card shows who shared it, the conversation and their message, with a "Spotify song" placeholder. A Spotify User opens it as-is; others get **Open original** plus a search link on their service.
