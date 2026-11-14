@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO incoming_links (\n               source, conversation_id, message_id, url, service, link_kind, external_id,\n               has_preview, preview_title, preview_description, preview_music, preview_thumb_bytes,\n               conversation_kind, sender_hash, origin, sent_at)\n           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)\n           ON CONFLICT (source, conversation_id, message_id, url) DO NOTHING",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Bool",
+        "Text",
+        "Text",
+        "Jsonb",
+        "Int4",
+        "Text",
+        "Text",
+        {
+          "Custom": {
+            "name": "message_origin",
+            "kind": {
+              "Enum": [
+                "live",
+                "catch_up",
+                "history_sync"
+              ]
+            }
+          }
+        },
+        "Timestamptz"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "33a3192837018b7f2ad7280c983bfb431aaaa2d2aa3e50d5beca9f5ea8e12084"
+}

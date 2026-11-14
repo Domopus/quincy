@@ -9,7 +9,7 @@ WhatsApp is the first chat source; Messenger and others come later. None has an 
 ## Decision
 
 - Every chat source is a thin **bridge**: it only talks to its chat platform. Link detection, matching, streaming services and the Feed stay in the Rust server, written once for all sources (ADR-0003).
-- **Bridge → Rust:** one shared webhook and message format for every source: `source`, message ID, user, sender, conversation (ID, `direct`/`group`, name), text, link preview, time. The WhatsApp bridge sends `source` from day one.
+- **Bridge → Rust:** one shared webhook and message format for every source: `source`, message ID, user, sender, conversation (ID, `direct`/`group`, name), text, link preview, time. The WhatsApp bridge sends `source` from day one. Implemented 2026-11-14 in `server/openapi.json`: "user" is `connection_id` (the Chat connection; the bridge knows no Users), and `origin` (`live`, `catch_up`, `history_sync`) was added so spike A can tell live messages from resends and history. The webhook answers 204 when stored, 401 on a wrong bridge secret, 500 when not stored (the bridge must not confirm receipt).
 - **Rust → bridge:** the same command set for every source: start pairing, unlink, status. Each bridge implements it its own way.
 - Messages are pushed, never fetched (ADR-0002).
 - **Delivery rules** every bridge must meet, each in its own way (added 2026-10-25):

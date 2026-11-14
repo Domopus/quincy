@@ -8,7 +8,37 @@ rust = "1.100.0"
 [env]
 # Local dev only; matches compose.yaml.
 DATABASE_URL = "postgres://quincy:quincy@localhost:5432/quincy"
+# BRIDGE_SECRET and SENDER_HASH_KEY: never committed (`mise run secrets` creates them).
+_.file = ".env"
 
 [tasks.db]
 description = "Start the dev Postgres"
 run = "docker compose up -d --wait postgres"
+
+[tasks.secrets]
+description = "Create .env with random dev secrets, once"
+run = """
+test -f .env && { echo ".env already exists"; exit 0; }
+printf 'BRIDGE_SECRET=%s\nSENDER_HASH_KEY=%s\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env
+"""
+
+[tasks.dev]
+description = "Run the server (migrations run at start)"
+depends = ["db"]
+run = "cargo run --manifest-path server/Cargo.toml --bin quincy-server"
+
+[tasks.gen]
+description = "Regenerate every committed spec and client (ADR-0010)"
+run = [
+  "cargo run -q --manifest-path server/Cargo.toml --bin openapi > server/openapi.json",
+  "cd server && cargo sqlx prepare -- --all-targets",
+]
+
+[tasks.check]
+description = "Format, lint and test everything"
+depends = ["db"]
+run = [
+  "cargo fmt --manifest-path server/Cargo.toml --check",
+  "cargo clippy --manifest-path server/Cargo.toml --all-targets -- -D warnings",
+  "cargo test --manifest-path server/Cargo.toml",
+]

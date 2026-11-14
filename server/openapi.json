@@ -1,0 +1,188 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Quincy server",
+    "description": "Webhook for chat bridges (ADR-0009).",
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/internal/messages": {
+      "post": {
+        "tags": [
+          "webhook"
+        ],
+        "operationId": "receive",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncomingMessage"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Accepted; the bridge may confirm receipt"
+          },
+          "401": {
+            "description": "Missing or wrong bridge secret"
+          },
+          "500": {
+            "description": "Not stored; the bridge must not confirm receipt"
+          }
+        },
+        "security": [
+          {
+            "bridge_secret": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Conversation": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ConversationKind"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "ConversationKind": {
+        "type": "string",
+        "enum": [
+          "direct",
+          "group"
+        ]
+      },
+      "IncomingMessage": {
+        "type": "object",
+        "required": [
+          "source",
+          "message_id",
+          "connection_id",
+          "sender",
+          "conversation",
+          "sent_at",
+          "origin"
+        ],
+        "properties": {
+          "connection_id": {
+            "type": "string",
+            "description": "The Chat connection the message arrived on."
+          },
+          "conversation": {
+            "$ref": "#/components/schemas/Conversation"
+          },
+          "link_preview": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LinkPreview"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message_id": {
+            "type": "string",
+            "description": "Stays the same if the message is sent again."
+          },
+          "origin": {
+            "$ref": "#/components/schemas/Origin"
+          },
+          "sender": {
+            "type": "string",
+            "description": "Sender ID on the chat platform. Hashed before storage."
+          },
+          "sent_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "type": "string",
+            "description": "Chat source, e.g. `whatsapp`."
+          },
+          "text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "LinkPreview": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "music_metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The platform's structured music fields, as received."
+          },
+          "thumbnail_bytes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Size of the preview thumbnail; the image itself is never sent."
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The URL the preview was built for."
+          }
+        }
+      },
+      "Origin": {
+        "type": "string",
+        "enum": [
+          "live",
+          "catch_up",
+          "history_sync"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "bridge_secret": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
