@@ -22,6 +22,12 @@ Repo layout settled (ADR-0010, 2026-11-14): spike A is written straight into `se
 **Week started 2026-11-14 14:01.** The pairing's history sync (INITIAL_BOOTSTRAP, then RECENT) went back to 2026-10-04: 3,072 messages counted by the server, 9 music links (5 Spotify tracks, 4 Deezer short links), all with a preview, none with `musicMetadata`. The bridge's own count was higher (5,518), because it also counted the messages it skips (the User's own, status, channels); its log now shows them apart. Then: run spike B on the week's links.
 2. **Spike B, the matcher:** run spike A's real links through Deezer; measure the hit rate and how often duplicates appear. Also live-test Spotify Search with `isrc:` on client credentials (decided 2026-10-25; if it fails, Spotify output falls back to the search link).
 3. **Item identity decided 2026-11-14:** a Song Item is one recording (ADR-0011), derived from `links` and `matches`, never merged (ADR-0012). Still to decide: server-or-phone for the WhatsApp session.
+4. **Schema review of ADR-0012, 2026-11-14** (global skill `postgres-schema`; candidate DDL and 8 scenarios run on Postgres 18 in `docs/reviews/2026-11-14-schema-review/`). Holds: resent messages, blocked bad Matches, matcher retry, Feed read on indexes. Applied to ADR-0012: `shares.original_url` with `link_id` NULL until a short link is resolved; Feed sorted on `sent_at`; nullable display metadata. **Decisions still to take, one at a time** (recommendation in brackets):
+   1. Expired Spotify Content vs Listened: deleting an expired Spotify link a User listened to is blocked by `listened` (scenario S7). [expiry applies to the Match row, which is re-checked; a `links` row others point to is never deleted]
+   2. One metadata source per link instead of one per field. [yes: the fields come together from Deezer or the preview]
+   3. `matches.method` as `text` + `check` with only `isrc`, `metadata`, `musicbrainz`, `manual`. [yes: `source` is meaningless without stored Items; `upc` and `odesli` are unused in the prototype]
+   4. Copy `account_id` into `conversations` and `shares`, kept honest by composite foreign keys, so one index serves a User's Feed. [yes]
+   Then: update ADR-0012 (and ADR-0006's enum list), then write the migrations from `schema.sql`.
 
 ## Open questions
 

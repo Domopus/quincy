@@ -1,6 +1,6 @@
 # 0012 — Derived Item identity: links and matches, no merges
 
-Status: Accepted (2026-11-14). Supersedes ADR-0006's `items`, `item_links`, `shares` and `listened` tables; the rest of ADR-0006 stands.
+Status: Accepted (2026-11-14); amended the same day after a schema review run on real data (`docs/reviews/2026-11-14-schema-review/`). Supersedes ADR-0006's `items`, `item_links`, `shares` and `listened` tables; the rest of ADR-0006 stands.
 
 ## Context
 
@@ -10,9 +10,9 @@ ADR-0006 stores an Item as a row. When a match reveals that two Items are the sa
 
 No `items` table. The stored facts are:
 
-- **`links`** — one track (later album…) on one service: unique `(service, kind, external_id)`, with its ISRC when known and its display metadata (title, artist, duration, cover), each with its source. Display data stays on the link it was read from, never copied to another.
+- **`links`** — one track (later album…) on one service: unique `(service, kind, external_id)`, with its ISRC when known and its display metadata (title, artist, duration, cover) and their source. Each metadata field may be NULL (unknown): a real Spotify preview had the title "open.spotify.com". Display data stays on the link it was read from, never copied to another.
 - **`matches`** — a Match (glossary): `(link_id, service, matched_link_id, method, confidence, attempted_at)`, unique on `(link_id, service)`: "this link's recording on that service is that link". `method` and `confidence` keep ADR-0006's enums. "Searched, not found" is a row with `matched_link_id` NULL and `confidence` `none`, retried after ~7 days.
-- **`shares`** — point to the shared link (`link_id`), exactly what the Contact sent; plus the conversation, sender, message and `(source, message_id)` as in ADR-0006.
+- **`shares`** — keep the URL as sent (`original_url`) and point to its link (`link_id`), NULL until the URL is resolved: a Deezer short link (`link.deezer.com/s/…`, 4 of spike A's first 9 links) has no ID until its redirect is followed. Unique on `(conversation_id, message_id, original_url)`, so a resent message is dropped and a message with two links gives two Shares. Plus the sender, message, `sent_at` and `received_at`. The Feed sorts on `sent_at`: history sync and catch-up deliver old messages late, so `received_at` would put them on top.
 - **`listened`** — `(user, link_id, listened_at)`, on the link of the User's Preferred service, the one they opened.
 
 "Same Song" is computed, never stored: same ISRC, or a Match at `high` or above. Nothing is merged, so nothing is undone; a wrong Match is one row to delete.
