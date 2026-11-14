@@ -8,7 +8,7 @@ Re-framing the project after a 6-month break; grilling the open questions. No ne
 
 ## Next step
 
-**First (added 2026-11-10 by Claude Fable 5, not Opus 5.5):** an external review of the whole plan is in `docs/reviews/2026-11-10-fable-review.md`. It is opinion, not decisions. Discuss it with the user before resuming the grilling below; its section 7 proposes a different order of work (define the prototype, two spikes, then Item identity). The rest of this file is unchanged.
+**First: discuss the external review's order of work.** The review by Claude Fable 5.2 is in `docs/reviews/2026-11-10-fable-review.md` (opinion, not decisions). Checked against the docs on 2026-11-14: its facts hold; its section 6 inconsistencies are fixed. Settled since: Quincy is a personal tool, not a market product, and a reply assistant is a project goal (`product.md` "Audience" and "Later"). This weakens the review's launch-oriented points (token encryption, GDPR, non-commercial terms). Corrections to the review: a search-link-only Spotify output shrinks the expiry section but doesn't remove it (Spotify `source` rows remain); "derived identity" also needs Listened and Shares rekeyed, since both use `item_id`. Next: take section 7 one step per turn, starting with "define the prototype" in `product.md`. Only then resume the grilling below, or park it if the user adopts the spikes-first order.
 
 Resume `/grilling` on **Item identity and merging** (below), in this order:
 
