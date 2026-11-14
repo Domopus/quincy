@@ -25,9 +25,9 @@ Repo layout settled (ADR-0010, 2026-11-14): spike A is written straight into `se
 4. **Schema review of ADR-0012, 2026-11-14** (global skill `postgres-schema`; candidate DDL and 8 scenarios run on Postgres 18 in `docs/reviews/2026-11-14-schema-review/`). Holds: resent messages, blocked bad Matches, matcher retry, Feed read on indexes. Applied to ADR-0012: `shares.original_url` with `link_id` NULL until a short link is resolved; Feed sorted on `sent_at`; nullable display metadata. **Decisions still to take, one at a time** (recommendation in brackets):
    1. ~~Expired Spotify Content vs Listened~~ (scenario S7). Decided 2026-11-14: deferred until a User prefers Spotify, since only such a User makes Quincy search Spotify. Then the expiry goes on the Match, never deletes a referenced link, and an API-made Spotify link stores only its ID (ADR-0012). `expires_at` removed from `schema.sql`.
    2. ~~One metadata source per link instead of one per field.~~ Decided 2026-11-14: yes, `deezer_api` or `preview`; a Deezer API read replaces a preview's fields as a group, never the reverse (ADR-0012). MusicBrainz leaves the prototype, as the external review advised: ADR-0008's fallback step 2 is deferred (low coverage; all of spike A's Spotify links had a preview).
-   3. `matches.method` as `text` + `check` with only `isrc`, `metadata`, `manual`. [yes: `source` is meaningless without stored Items; `upc`, `odesli` and `musicbrainz` are unused in the prototype]
+   3. ~~`matches.method` as `text` + `check`.~~ Decided 2026-11-14: yes, with only `isrc`, `metadata`, `manual`; `confidence` stays an enum (ADR-0012, ADR-0006 table marked superseded).
    4. Copy `account_id` into `conversations` and `shares`, kept honest by composite foreign keys, so one index serves a User's Feed. [yes]
-   Then: update ADR-0012 (and ADR-0006's enum list), then write the migrations from `schema.sql`.
+   Then: write the migrations from `schema.sql` (skill `postgres-schema`).
 
 ## Open questions
 

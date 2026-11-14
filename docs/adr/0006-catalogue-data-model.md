@@ -1,6 +1,6 @@
 # 0006 — Catalogue data model: one row per (item, service)
 
-Status: Superseded in part by ADR-0012 (2026-11-14): `items`, `item_links`, `shares` and `listened` are replaced by `links` and `matches`, with no merges. `conversations`, the `method` and `confidence` enums, and the Spotify expiry still stand (the expiry moves to the Match and is deferred until a Spotify User joins, ADR-0012). Accepted 2026-10-18; names settled 2026-10-25; `conversations` added 2026-11-03.
+Status: Superseded in part by ADR-0012 (2026-11-14): `items`, `item_links`, `shares` and `listened` are replaced by `links` and `matches`, with no merges. `conversations`, the `confidence` enum, and the Spotify expiry still stand (the expiry moves to the Match and is deferred until a Spotify User joins); the `method` enum becomes `text` + `check` with only `isrc`, `metadata`, `manual` (ADR-0012). Accepted 2026-10-18; names settled 2026-10-25; `conversations` added 2026-11-03.
 
 ## Context
 
@@ -19,6 +19,8 @@ A link shared from any service must open on the User's service, every match shou
 Any incoming link → follow redirect, clean → look up `(service, external_id)` → self-join on `item_id` for the User's service. Store IDs, never URLs; URLs are built in code per (service, kind). Match as soon as a Share arrives, for the recipient's service.
 
 ### `method` (enum)
+
+_Superseded by ADR-0012: `text` + `check`, prototype values `isrc`, `metadata`, `manual`. The table below keeps the meaning of each value for when one comes back._
 
 | Value | Meaning | Auto re-run |
 |---|---|---|
