@@ -6,7 +6,7 @@ Friends share songs in chat apps. They get buried in conversations and never lis
 
 ## Audience
 
-Built for the developer first (decided 2026-11-14): a personal tool, not a product for the market. Close friends may use it, but nothing is designed for strangers, scale or commercial use. Privacy stays a real requirement, because Contacts' messages pass through Quincy, but it is not launch or compliance work. Terms limited to non-commercial use (Deezer, Tidal) fit this.
+Built for the developer first (decided 2026-11-14): a personal tool, not a product for the market. The prototype has one User, the developer. If it proves useful, it is shared with friends soon after, so the design must allow a few Users without a rebuild; nothing is designed for strangers, scale or commercial use. Privacy stays a real requirement, because Contacts' messages pass through Quincy, but it is not launch or compliance work. Terms limited to non-commercial use (Deezer, Tidal) fit this.
 
 ## Onboarding (prototype)
 
