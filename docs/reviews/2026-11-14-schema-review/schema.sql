@@ -14,6 +14,14 @@ create table chat_connections (
   created_at timestamptz not null default now()
 );
 create index chat_connections_account_id_idx on chat_connections (account_id); -- fk; "my connections"
+-- Pairing state (ADR-0009), added by its own migration.
+alter table chat_connections
+  add column external_hash text  -- NULL: not paired yet; hash of the account's own ID (WhatsApp JID), same key as senders
+    constraint chat_connections_external_hash_check check (external_hash ~ '^[0-9a-f]{32}$'),
+  add column logged_out_at timestamptz;  -- NULL: session live or not paired yet
+-- One Account per chat account; unpaired rows (NULL) don't collide.
+create unique index chat_connections_source_external_hash_key on chat_connections (source, external_hash)
+  where external_hash is not null;
 
 create table conversations (
   id                 bigint generated always as identity primary key,
