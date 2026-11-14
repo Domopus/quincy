@@ -15,7 +15,7 @@ Contracts are **code-first, and the owner of each API is its source of truth**. 
 - Bridge commands: Go owns them → `huma` spec → generated Rust client.
 - Bridge → server webhook: Rust owns it → `utoipa` spec → generated Go client (ADR-0002).
 
-_(Amended 2026-10-18 — previously "shared schemas live in one folder", which contradicted the utoipa plan.)_
+_(Amended 2026-10-18 — previously "shared schemas live in one folder", which contradicted the utoipa plan.)_ Layout, spec locations and the "all generated code is committed" rule: ADR-0010 (2026-11-14).
 
 ## Rejected
 

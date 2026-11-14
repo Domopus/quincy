@@ -8,8 +8,7 @@ dist/
 .vite/
 
 # Tauri
-frontend/src-tauri/target/
-frontend/src-tauri/WixTools/
+app/src-tauri/WixTools/
 *.app
 *.dmg
 *.deb

@@ -4,13 +4,13 @@ _Rewrite this file; don't append. Git keeps the history._
 
 ## Where we are (2026-11-14)
 
-Re-framing the project after a 6-month break. No new code yet. Decisions are in `docs/adr/`, `GLOSSARY.md` and `product.md`. Sessions of 2026-10-25 and 2026-11-03 grilled the bridge contract, Spotify data rules and Item identity. On 2026-11-14 an external review by Claude Fable 5.2 (`docs/reviews/2026-11-10-fable-review.md`, opinion, not decisions) was checked and its doc inconsistencies fixed. Then the prototype was defined (`product.md` "Audience" and "Prototype success"): Quincy is a personal tool; the prototype's only User is the developer, whose Account is created in the database (ADR-0007); friends follow if it succeeds. A reply assistant is a project goal (`product.md` "Later"). The review's spikes-first order was adopted: measure real messages before designing further.
+Re-framing the project after a 6-month break. No new code yet. Decisions are in `docs/adr/`, `GLOSSARY.md` and `product.md`. Sessions of 2026-10-25 and 2026-11-03 grilled the bridge contract, Spotify data rules and Item identity. On 2026-11-14 an external review by Claude Fable 5.2 (`docs/reviews/2026-11-10-fable-review.md`, opinion, not decisions) was checked and its doc inconsistencies fixed. Then the prototype was defined (`product.md` "Audience" and "Prototype success"): Quincy is a personal tool; the prototype's only User is the developer, whose Account is created in the database (ADR-0007); friends follow if it succeeds. A reply assistant is a project goal (`product.md` "Later"). The review's spikes-first order was adopted: measure real messages before designing further. The repo layout was settled from six reference repos (ADR-0010) and the April scaffold deleted.
 
 Review points still worth keeping in mind: the whatsmeow session store is the asset to protect; WhatsApp-side ban risk deserves a plain warning at pairing; ADR-0003's rejection reason is stale. Corrections to the review: a search-link-only Spotify output shrinks the expiry section but doesn't remove it (Spotify `source` rows remain); "derived identity" also needs Listened and Shares rekeyed, since both use `item_id`.
 
 ## Next step
 
-Spike code lives in a throwaway `spikes/` folder (decided 2026-11-14, see CLAUDE.md); the repo layout waits until after the spikes.
+Repo layout settled (ADR-0010, 2026-11-14): spike A is written straight into `server/` and `bridges/whatsapp/`, server webhook first (it owns the contract), then the bridge. No throwaway folder.
 
 1. **Spike A, the bridge:** whatsmeow on the developer's account, logging only music links and their previews for a week. Runs on the developer's Mac (decided 2026-11-14): home IP, no server; WhatsApp resends what arrived while the Mac slept, which also tests catch-up. Server conditions (always-on, datacenter IP) are tested later, with the server-or-phone choice. Answers: preview presence for Spotify links, `musicMetadata` fill, history sync depth.
 2. **Spike B, the matcher:** run spike A's real links through Deezer; measure the hit rate and how often duplicates appear. Also live-test Spotify Search with `isrc:` on client credentials (decided 2026-10-25; if it fails, Spotify output falls back to the search link).
@@ -18,7 +18,6 @@ Spike code lives in a throwaway `spikes/` folder (decided 2026-11-14, see CLAUDE
 
 ## Open questions
 
-- **Repo layout** inside the monorepo (folder names, where generated clients live).
 - **History sync at pairing** (raised 2026-11-10 by the external review). Ingest the Shares from WhatsApp's history sync so the Feed is full on day one? If yes, how far back. `product.md` onboarding assumes it. Spike A gives the facts.
 
 ## Parked until the spikes (2026-11-14)
@@ -132,7 +131,7 @@ Sources: official developer docs and terms for each service (Spotify policy and 
 
 - _(none right now)_
 
-## Planned backend conventions (apply when the Rust server is scaffolded, then move to `backend/CLAUDE.md`)
+## Planned backend conventions (apply when the Rust server is scaffolded, then move to `server/CLAUDE.md`)
 
 - A shared `CrudService` trait for entity services — speeds up building new modules.
 - `utoipa` for OpenAPI/Swagger docs on every controller; the generated spec is also the source for the TypeScript client (ADR-0001).

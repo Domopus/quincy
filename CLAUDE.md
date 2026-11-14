@@ -26,10 +26,9 @@ Mobile app that collects the songs friends share in chat apps (WhatsApp first) i
 - Identity is an email Account; chat sources are Chat connections attached to it; streaming is only a Preferred service, no login (ADR-0007).
 - Spotify data never goes to another service; Spotify-link details come from the WhatsApp link preview (ADR-0008).
 - Every chat source is a thin bridge sharing one webhook format (with `source`) and one command set (ADR-0009).
+- One folder per deployable; specs beside their owner; all generated code committed; one Rust package until the Tauri core (ADR-0010).
 - Deferred on purpose for the prototype: authorization, token encryption, Tauri-specific features. Not bugs.
 
 ## State of the code
 
-`backend/` and `frontend/` are an April 2026 scaffold built on an old spec (Spotify identity, desktop). Treat them as disposable; the layout gets redesigned before new code is written. Commands are added here once that layout exists.
-
-`spikes/` holds throwaway experiments that measure real data before design (decided 2026-11-14). The layout rule doesn't apply there. Spike code never becomes product code: it is deleted, or rewritten in the real layout.
+Layout in ADR-0010: `server/` (Rust), `bridges/<source>/` (Go), `app/` (Tauri, later). No code yet; commands are added here once `mise.toml` exists. Generated specs and clients are committed and regenerated with `mise run gen`; never edit them by hand.
