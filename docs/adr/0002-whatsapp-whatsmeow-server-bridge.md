@@ -1,6 +1,6 @@
 # 0002 — WhatsApp via whatsmeow in a server-side Go bridge
 
-Status: Accepted (2026-10-18), amended same day: filtering moved to Rust; delivery by webhook.
+Status: Accepted (2026-10-18), amended same day: filtering moved to Rust; delivery by webhook. Amended 2026-11-14: server-side confirmed for the prototype; reviewed before friends join.
 
 ## Context
 
@@ -14,6 +14,16 @@ A thin Go bridge on the server runs one whatsmeow linked-device session per User
 - **Incoming messages → webhook:** for every message, the bridge POSTs (source, user, sender, conversation, text, link preview, time; shared format per ADR-0009) to the Rust server's `POST /internal/messages`, then forgets it. Rust filters for music URLs and drops everything else (ADR-0003). Connection lost/restored is sent the same way.
 - **Commands → bridge API:** Rust calls the bridge to start pairing (returns the 8-char code), unlink, and get status. The bridge also reports a logout by WhatsApp to Rust, which prompts the User to reconnect (added 2026-10-25).
 - **Contracts (ADR-0001):** Rust owns the webhook endpoint (`utoipa` → generated Go client, `oapi-codegen`); Go owns the commands API (`huma` → generated Rust client, `progenitor`). The bridge is configured with Rust's URL and a shared secret.
+
+## Server or phone (2026-11-14)
+
+The external review (`docs/reviews/2026-11-10-fable-review.md`) proposed running the session on the phone, inside the Quincy app. Kept on the server for the prototype:
+
+- The bridge and webhook exist and run spike A; a phone session means rewriting the bridge into the app (gomobile or whatsapp-rust) and moving link filtering out of Rust (ADR-0003).
+- With one User, the developer, on the developer's own machine, the phone's gains (messages never leave the device, home IP) are already met.
+- A server session leaves the client free: a list of cards with links out needs no native code. A phone session forces Tauri or native, a foreground service on Android, and sync only while open on iOS.
+
+Lost: privacy does not hold by construction (the whatsmeow session store stays the asset to protect), and the reply assistant (product.md "Later"), which reads every message, would be easier to defend on the phone. Both matter once friends join, so the choice is **reviewed before friends join**, with spike A's catch-up numbers (a Mac that sleeps behaves like a phone).
 
 ## Rejected
 
