@@ -31,4 +31,7 @@ Mobile app that collects the songs friends share in chat apps (WhatsApp first) i
 
 ## State of the code
 
-Layout in ADR-0010: `server/` (Rust), `bridges/<source>/` (Go), `app/` (Tauri, later). No code yet; commands are added here once `mise.toml` exists. Generated specs and clients are committed and regenerated with `mise run gen`; never edit them by hand.
+Layout in ADR-0010: `server/` (Rust), `bridges/<source>/` (Go), `app/` (Tauri, later). Commands:
+
+- `mise install` — install Go, Rust and sqlx-cli at the pinned versions.
+- `mise run db` — start the dev Postgres (OrbStack or Docker). Generated specs and clients are committed and regenerated with `mise run gen`; never edit them by hand.

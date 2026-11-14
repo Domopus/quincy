@@ -1,0 +1,14 @@
+# Tool versions and tasks for the whole repo (ADR-0010).
+
+[tools]
+go = "1.27.4"
+rust = "1.100.0"
+"cargo:sqlx-cli" = "0.9.0"
+
+[env]
+# Local dev only; matches compose.yaml.
+DATABASE_URL = "postgres://quincy:quincy@localhost:5432/quincy"
+
+[tasks.db]
+description = "Start the dev Postgres"
+run = "docker compose up -d --wait postgres"
