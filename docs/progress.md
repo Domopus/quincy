@@ -10,10 +10,11 @@ Review points still worth keeping in mind: the whatsmeow session store is the as
 
 ## Next step
 
-1. **Where spike code lives:** settle the repo layout first, or put the spikes in a throwaway folder (CLAUDE.md asks for the layout before new code).
-2. **Spike A, the bridge:** whatsmeow on the developer's account, logging only music links and their previews for a week. Answers: preview presence for Spotify links, `musicMetadata` fill, history sync depth.
-3. **Spike B, the matcher:** run spike A's real links through Deezer; measure the hit rate and how often duplicates appear. Also live-test Spotify Search with `isrc:` on client credentials (decided 2026-10-25; if it fails, Spotify output falls back to the search link).
-4. **Decide Item identity** (Decision 1 below) with those numbers, and server-or-phone for the WhatsApp session.
+Spike code lives in a throwaway `spikes/` folder (decided 2026-11-14, see CLAUDE.md); the repo layout waits until after the spikes.
+
+1. **Spike A, the bridge:** whatsmeow on the developer's account, logging only music links and their previews for a week. Answers: preview presence for Spotify links, `musicMetadata` fill, history sync depth.
+2. **Spike B, the matcher:** run spike A's real links through Deezer; measure the hit rate and how often duplicates appear. Also live-test Spotify Search with `isrc:` on client credentials (decided 2026-10-25; if it fails, Spotify output falls back to the search link).
+3. **Decide Item identity** (Decision 1 below) with those numbers, and server-or-phone for the WhatsApp session.
 
 ## Open questions
 

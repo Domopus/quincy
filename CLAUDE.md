@@ -31,3 +31,5 @@ Mobile app that collects the songs friends share in chat apps (WhatsApp first) i
 ## State of the code
 
 `backend/` and `frontend/` are an April 2026 scaffold built on an old spec (Spotify identity, desktop). Treat them as disposable; the layout gets redesigned before new code is written. Commands are added here once that layout exists.
+
+`spikes/` holds throwaway experiments that measure real data before design (decided 2026-11-14). The layout rule doesn't apply there. Spike code never becomes product code: it is deleted, or rewritten in the real layout.
