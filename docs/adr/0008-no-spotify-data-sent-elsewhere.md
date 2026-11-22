@@ -1,6 +1,6 @@
 # 0008 — Spotify data never leaves for another service
 
-Status: Accepted (2026-10-25); fallback step 2 (MusicBrainz) deferred 2026-11-14. Partly superseded by ADR-0014 (2026-11-22): for the personal prototype, the ISRC of a shared Spotify link is read from the Spotify Web API.
+Status: Accepted (2026-10-25); fallback step 2 (MusicBrainz) deferred 2026-11-14. Partly superseded by ADR-0014 (2026-11-22): for the personal prototype, a shared Spotify link's metadata is read from its embed page.
 
 ## Context
 

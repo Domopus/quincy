@@ -25,7 +25,7 @@ Mobile app that collects the songs friends share in chat apps (WhatsApp first) i
 - Cross-service song matching is our own code: ISRC first, then cleaned metadata + duration (ADR-0005).
 - Catalogue: `links` (one per service ID) and `matches` between them; an Item is derived, never stored or merged (ADR-0012, supersedes part of ADR-0006).
 - Identity is an email Account; chat sources are Chat connections attached to it; streaming is only a Preferred service, no login (ADR-0007).
-- Spotify data never goes to another service; Spotify-link details come from the WhatsApp link preview (ADR-0008). Exception for the personal prototype: a shared Spotify link's ISRC is read from the Spotify Web API with the developer's own key, in one removable module (ADR-0014), blocked: the API needs a Premium app owner, so Spotify links rely on the preview for now.
+- Spotify data never goes to another service; Spotify-link details come from the WhatsApp link preview (ADR-0008). Exception for the personal prototype: a shared Spotify link's title, artists and duration are read from its embed page, then the preview; one removable module (ADR-0014). The Web API is out: it needs a Premium app owner.
 - Every chat source is a thin bridge sharing one webhook format (with `source`) and one command set (ADR-0009).
 - One folder per deployable; specs beside their owner; all generated code committed; one Rust package until the Tauri core (ADR-0010).
 - A Song Item is one recording (ISRC level), not the song in any version (ADR-0011).
