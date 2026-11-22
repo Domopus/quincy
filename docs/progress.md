@@ -62,6 +62,10 @@ Server and bridge untouched until ~2026-11-21. Decided: WhatsApp session on the 
 
 All four decided; `DESIGN.md` written. Next: build the Feed in `app/` from `DESIGN.md`, on fake data.
 
+**Paused 2026-11-22, before building the Feed.** Two things come first, in this order:
+1. **How to design with Claude** (the user's question, still open). HTML mock-ups are fast and cheap in tokens; Figma is better to see, share and organise (Design System pages). Also: find existing design skills that produce good designs, or write our own one, that enforces design rules and reuses Design System components so they stay consistent. Already available in this setup: the Figma MCP server (read frames; write designs with `use_figma`, push code to Figma with `generate_figma_design`), the global skill `figma-extract-spec`, and the Artifact tool's `artifact-design` skill (HTML pages).
+2. **Card state "Closest version"** (decided 2026-11-22 as a product rule, not drawn yet). The user wants to see precise mock-ups before agreeing. Proposal to draw: the hero keeps the shared link's title and artist (what the Contact sent, not Deezer's "Side 4, Pt. 4: …"); a line "≈ Closest version on Deezer" (`text-muted`) above the actions; primary button "Open closest version" (opens the closest link, Listened goes on it); the Listened toggle; a small text link "Search" on the right for the search link. Then add the state to `DESIGN.md`.
+
 ## Open questions
 
 - **History sync at pairing** (raised 2026-11-10 by the external review). Ingest the Shares from WhatsApp's history sync so the Feed is full on day one? If yes, how far back. `product.md` onboarding assumes it. Spike A gives the facts.
