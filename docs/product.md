@@ -60,5 +60,6 @@ Out of the prototype: "Add all to queue" and writing to a playlist — no legiti
 - Username, arriving with the profile page. Never empty: every Account gets a random default (e.g. `quiet-otter-17`) the User can change. Not derived from the email, which would expose part of the address.
 - Albums, playlists, artists as share types.
 - Admin tool to correct wrong matches (until then: edit the DB by hand).
+- Feed display settings: choose what the Feed shows, e.g. hide Shares whose short link isn't resolved yet (raised 2026-11-15).
 
 - **Reply assistant** (a goal of the project, stated 2026-11-14): Quincy reads the User's WhatsApp messages, suggests replies, and sends one only when the User approves it. It conflicts with today's privacy principle (everything but music links is dropped) and with the bridge never sending (ADR-0002), so it needs its own design before it is built.

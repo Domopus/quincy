@@ -8,6 +8,7 @@ Mobile app that collects the songs friends share in chat apps (WhatsApp first) i
 - `GLOSSARY.md` — domain terms. Use these words, not synonyms.
 - `docs/product.md` — product vision; read when a product question comes up.
 - `docs/adr/` — decisions and rejected alternatives; read the ones touching your task.
+- `DESIGN.md` — tokens, components and screen states; read before UI work.
 
 ## Working rules
 

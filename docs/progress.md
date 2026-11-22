@@ -33,6 +33,18 @@ Repo layout settled (ADR-0010, 2026-11-14): spike A is written straight into `se
 
 Server and bridge untouched until ~2026-11-21. Decided: WhatsApp session on the server for the prototype (ADR-0002); installable web app first in React, wrapped with Tauri later (ADR-0013). Next: Feed frames from Figma (skill `figma-extract-spec`; the Figma MCP server was added 2026-11-14 after a first attempt found no Figma tools) → check them against ADR-0012 and the glossary → `DESIGN.md` → Feed in `app/` on fake data following ADR-0012 (`shares` → `links` → `matches` → `listened`; sort on `sent_at`; a Share with `link_id` NULL for an unresolved short link; NULL display metadata). No Feed endpoint yet.
 
+**Feed frames extracted 2026-11-15** (Figma section "Feed" 97:97: Normal 86:2, Empty — First Run 97:2, Inbox Zero 97:21; no Figma variables, raw values only). Aligned with the docs without a decision: "Add to queue" becomes "Open in <Preferred service>" (ADR-0004, `product.md` core loop), "Add all to queue" is dropped (`product.md`), a Listened / Not listened filter and a Listened state on the card are added (glossary), the drawn device status bar is dropped. Gaps decided one at a time:
+1. **Sender name** (decided 2026-11-15): the card shows the Contact's name. The fake data carries a nullable `sender_name`; NULL shows only the Conversation name with a generic avatar (in a direct Conversation that name is the Contact anyway). To build after ~2026-11-21, when the server and bridge can change:
+   - Webhook contract (ADR-0009, Rust-owned): a nullable `sender_name`, then `mise run gen`.
+   - Bridge: the address-book name (`Store.Contacts.GetContact` → `FullName`, the name the User saved), else the push name (`evt.Info.PushName`; also in history-sync messages). A group sender often arrives as a LID: map it with `Store.LIDs.GetPNForLID` first, or only the push name is found. Checked in whatsmeow `ecc39170bc14`.
+   - Server: a `contacts` table keyed `(chat_connection_id, sender_hash)` with a `display_name` updated on each message, not a column on `shares` (a name changes; one copy per Contact).
+   - Docs: a Contact's name is new personal data; `product.md` "Privacy" and ADR-0009 say it is kept.
+2. **"Dismiss" replaced by the Listened toggle** (decided 2026-11-15): the secondary button reads "Mark as listened", or "Mark as not listened" on a Listened card, so a misclick (or an open by mistake, which marks Listened) is undone in one tap. It writes or deletes the `listened` row. A Listened card stays in the Feed, dimmed, with a marker. Inbox Zero shows when the Not listened filter is empty but the Feed has Shares; Empty — First Run when the Feed has none. No "hide": it would need a table and a term for what Listened already covers.
+3. **No album on the card** (decided 2026-11-15): the line under the title shows the artist only; the cover places the record. `links` has no album, and only the Deezer API gives one reliably (a Deezer preview's description is "Artist - titre - 1969"). If wanted later: a nullable `links.album`, after ~2026-11-21.
+4. **Undrawn states** (decided 2026-11-15, detail in `DESIGN.md`): no Match on the Preferred service → "Search on Deezer" (title + artist), or "Open in <shared service>" with no metadata either; Listened then goes on the shared link, so a later Match turns the card Not listened (accepted, as for the Spotify expiry in ADR-0012). Unresolved short link → "Deezer link" / "Loading song details…", opens `original_url`, Listened toggle disabled (`listened` needs a `link_id`). NULL title → "Unknown song", no artist line. No cover → accent-gradient thumb with a note and a fixed hero gradient; with a cover, the hero tint is computed from it in the client.
+
+All four decided; `DESIGN.md` written. Next: build the Feed in `app/` from `DESIGN.md`, on fake data.
+
 ## Open questions
 
 - **History sync at pairing** (raised 2026-11-10 by the external review). Ingest the Shares from WhatsApp's history sync so the Feed is full on day one? If yes, how far back. `product.md` onboarding assumes it. Spike A gives the facts.
@@ -139,7 +151,7 @@ Sources: official developer docs and terms for each service (Spotify policy and 
 
 - Figma file: https://www.figma.com/design/xbD2AKVjev41Xr7IjNoe3s/Quincy?node-id=45-4
 - No full review now (decided 2026-10-18). When a question touches the UI (identity, pairing), extract only the relevant frames with `figma-extract-spec` and check them against the ADRs. The designs may predate the current spec.
-- Create `DESIGN.md` when UI work starts.
+- `DESIGN.md` created 2026-11-15 from the Feed frames: tokens, components, card and Feed states.
 
 ## Assumed (review with the user)
 

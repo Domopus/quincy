@@ -6,7 +6,7 @@ Domain terms only — no implementation details.
 - **Account** — a User's sign-in identity: email + password, verified by email.
 - **Chat connection** — a chat source linked to an Account through a live session (WhatsApp pairing first; Messenger, Instagram later). Shares arrive through it.
 - **Preferred service** — the streaming service where a User's songs open. A choice, not a login. Never call it a "connection".
-- **Contact** — a person in a chat app who sends links to a User. Not necessarily a User.
+- **Contact** — a person in a chat app who sends links to a User. Not necessarily a User. Has a name the Feed shows: the one the User saved for them, else the one they set in the chat app.
 - **Share** — one event: a Contact sent a music link to a User in a Conversation. Holds the original link and an optional message the Contact wrote with it.
 - **Conversation** — a chat where Shares arrive: direct (one Contact) or group (several Contacts). Has a name the Feed shows, e.g. "Eve in *Running club*". Belongs to one Chat connection.
 - **Feed** — the User's list of Shares, filterable by Listened / Not listened.
