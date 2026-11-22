@@ -66,7 +66,7 @@ Settled: a Song is one recording (ADR-0011), and identity is derived from `links
 
 **Product decisions still to ask** (from the edge-case tree; recommendation in brackets):
 1. ~~Is an Item a recording or a song in any version?~~ Decided 2026-11-14: a recording (ADR-0011).
-2. Exact recording missing on the User's service? [open the closest version, labelled "Closest version on Deezer", plus a search link]
+2. ~~Exact recording missing on the User's service?~~ Decided 2026-11-22: open the Closest version, labelled "Closest version on Deezer", plus a search link. Real case from spike B: the Spotify single "Louder Than Words" (Pink Floyd) vs Deezer's album take "Side 4, Pt. 4: Louder Than Words", the same song with or without sound effects. Still to design: how a Closest version is stored, since a Match means the same Item (ADR-0012) and a Closest version is not.
 3. ~~Does listening to one version mark the other as Listened?~~ No: follows from ADR-0011; Listened is on the link the User opened (ADR-0012).
 4. ~~Who reviews merge candidates in the prototype?~~ Moot: no merges (ADR-0012). Was: [the developer via SQL; Users see duplicate cards meanwhile]
 5. ~~Should a `high` `metadata` match merge automatically?~~ ADR-0012: a Match at `high` or above counts as the same Song; how version tags cap confidence is edge-tree rule 1. Was: [only if version tags agree and no ISRC conflicts; tightens the approved candidate rule]
