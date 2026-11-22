@@ -62,4 +62,15 @@ Out of the prototype: "Add all to queue" and writing to a playlist — no legiti
 - Admin tool to correct wrong matches (until then: edit the DB by hand).
 - Feed display settings: choose what the Feed shows, e.g. hide Shares whose short link isn't resolved yet (raised 2026-11-15).
 
-- **Reply assistant** (a goal of the project, stated 2026-11-14): Quincy reads the User's WhatsApp messages, suggests replies, and sends one only when the User approves it. It conflicts with today's privacy principle (everything but music links is dropped) and with the bridge never sending (ADR-0002), so it needs its own design before it is built.
+- **Reply assistant** (a goal of the project, stated 2026-11-14): Quincy reads the User's WhatsApp messages, suggests replies, and sends one only when the User approves it. It conflicts with today's privacy principle (everything but music links is dropped) and with the bridge never sending (ADR-0002), so it needs its own design before it is built. It is one Plugin of the direction below.
+
+## Direction: a message assistant with Plugins (stated 2026-11-22)
+
+The horizon, not the prototype's scope: the prototype stays the music Feed. Quincy becomes an assistant that reads the messages a User receives and helps act on them through **Plugins**. Each Plugin brings a prompt for the LLM, optional scripts to run, and a React view in the app. Music sharing is the first Plugin; the Plugin shape is abstracted only when a second one is built, not before.
+
+- **Examples given:** suggest a calendar event when friends propose something, with RSVP, a suggested reply and invitations; suggest replies to unanswered messages; User rules such as "upload every photo of this Conversation to Google Photos with the sender's name".
+- **Deterministic first:** code does what it can (APIs, matching); an LLM is asked only when the code is unsure (e.g. a Pink Floyd album take vs its single edit). Repetitive LLM work is turned into code over time, written by the developer, not generated at runtime by the app.
+- **Without an API:** a browser driven from the server (Playwright-style) is the last resort.
+- **Privacy:** the LLM is open source, hosted by a European provider (e.g. Scaleway). Built for the developer first; friends are asked once it works. Guiding question for every design: how to make sure no third party can use the data without free and informed consent. Reading every message breaks today's "Privacy" principle and ADR-0009; both are rewritten before this is built.
+- **Third-party Plugins** (only if a marketplace opens; in the prototype, only the developer's own Plugins exist): per-Plugin permissions (which Conversations, which data), a sandbox (WASM on the server, an isolated iframe for the view), and an in-depth review, LLM-led, before a Plugin is listed, to catch data leaks.
+- **Sending:** replies and reactions follow the patterns of mautrix-whatsapp (Beeper's bridge, also built on whatsmeow), always approved by the User.
